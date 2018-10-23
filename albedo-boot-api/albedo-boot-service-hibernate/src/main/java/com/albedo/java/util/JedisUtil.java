@@ -11,7 +11,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
  *
  * @version 2014-6-29
  */
-public class JedisUtil {
+public class RedisUtil {
 
     public static final String KEY_PREFIX = SpringContextHolder.getBean(AlbedoProperties.class).getJedisKeyPrefix();
     /*** 系统 缓存 */

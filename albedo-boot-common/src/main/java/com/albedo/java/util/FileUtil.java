@@ -1,7 +1,6 @@
 package com.albedo.java.util;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,7 @@ import java.util.UUID;
  * @author Lijie
  * @version 2013-06-21
  */
-public class FileUtil extends FieldUtils {
+public class FileUtil extends FileUtils {
 
     private static Logger log = LoggerFactory.getLogger(FileUtil.class);
 
@@ -473,5 +472,8 @@ public class FileUtil extends FieldUtils {
             log.error("{}",e);
         }
     }
+
+
+
 
 }

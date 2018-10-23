@@ -1,6 +1,6 @@
 package com.albedo.java.common.config.gateway.ratelimiting;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 
 import java.time.Duration;
 import java.util.function.Supplier;
@@ -37,14 +37,14 @@ public class RateLimitingFilter extends ZuulFilter {
 
     public final static String GATEWAY_RATE_LIMITING_CACHE_NAME = "gateway-rate-limiting";
 
-    private final AlbedoProperties albedoProperties;
+    private final ApplicationProperties applicationProperties;
 
     private javax.cache.Cache<String, GridBucketState> cache;
 
     private ProxyManager<String> buckets;
 
-    public RateLimitingFilter(AlbedoProperties albedoProperties) {
-        this.albedoProperties = albedoProperties;
+    public RateLimitingFilter(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
 
         CachingProvider cachingProvider = Caching.getCachingProvider();
         CacheManager cacheManager = cachingProvider.getCacheManager();
@@ -90,8 +90,8 @@ public class RateLimitingFilter extends ZuulFilter {
 
     private Supplier<BucketConfiguration> getConfigSupplier() {
         return () -> {
-            AlbedoProperties.Gateway.RateLimiting rateLimitingProperties =
-                albedoProperties.getGateway().getRateLimiting();
+            ApplicationProperties.Gateway.RateLimiting rateLimitingProperties =
+                applicationProperties.getGateway().getRateLimiting();
 
             return Bucket4j.configurationBuilder()
                 .addLimit(Bandwidth.simple(rateLimitingProperties.getLimit(),

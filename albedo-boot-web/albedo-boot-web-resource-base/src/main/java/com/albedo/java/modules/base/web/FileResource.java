@@ -1,7 +1,6 @@
 package com.albedo.java.modules.base.web;
 
-import com.albedo.java.common.config.AlbedoProperties;
-import com.albedo.java.common.security.SecurityUtil;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.modules.sys.domain.FileData;
 import com.albedo.java.modules.sys.service.FileDataService;
 import com.albedo.java.util.BeanVoUtil;
@@ -13,7 +12,6 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -41,11 +39,11 @@ import java.util.stream.Collectors;
 public class FileResource extends BaseResource {
 
 
-    private final AlbedoProperties albedoProperties;
+    private final ApplicationProperties applicationProperties;
     private final FileDataService fileDataService;
 
-    public FileResource(AlbedoProperties albedoProperties, FileDataService fileDataService) {
-        this.albedoProperties = albedoProperties;
+    public FileResource(ApplicationProperties applicationProperties, FileDataService fileDataService) {
+        this.applicationProperties = applicationProperties;
         this.fileDataService = fileDataService;
     }
 
@@ -60,7 +58,7 @@ public class FileResource extends BaseResource {
     @ApiOperation(value = "文件上传", response = FileDataResultVo.class)
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseEntity upload(@RequestParam("uploadFile") MultipartFile[] files) {
-        String directory = albedoProperties.getStaticFileDirectory();
+        String directory = applicationProperties.getStaticFileDirectory();
         String dir = mkdirs(directory);
         List<FileData> fileDataList = Lists.newLinkedList();FileData fileData;
         for (int i = 0; i < files.length; i++) {
@@ -95,7 +93,7 @@ public class FileResource extends BaseResource {
         FileData fileData = fileDataService.findOneById(id);
         Assert.assertIsTrue(fileData!=null, "无法获取文件信息");
         try {
-            String path = albedoProperties.getStaticFileDirectory(fileData.getPath());
+            String path = applicationProperties.getStaticFileDirectory(fileData.getPath());
             File file = FileUtils.getFile(path);
             byte[] bytes = FileCopyUtils.copyToByteArray(file);
             String contentType = new MimetypesFileTypeMap().getContentType(file);

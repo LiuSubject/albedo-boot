@@ -44,20 +44,20 @@ public class LoggingConfiguration {
 
     private final String version;
 
-    private final AlbedoProperties albedoProperties;
+    private final ApplicationProperties applicationProperties;
 
     public LoggingConfiguration(@Value("${spring.application.name}") String appName, @Value("${server.port}") String serverPort,
-                                @Autowired(required = false) EurekaInstanceConfigBean eurekaInstanceConfigBean, @Value("${info.project.version}") String version, AlbedoProperties albedoProperties) {
+                                @Autowired(required = false) EurekaInstanceConfigBean eurekaInstanceConfigBean, @Value("${info.project.version}") String version, ApplicationProperties applicationProperties) {
         this.appName = appName;
         this.serverPort = serverPort;
         this.eurekaInstanceConfigBean = eurekaInstanceConfigBean;
         this.version = version;
-        this.albedoProperties = albedoProperties;
-        if (albedoProperties.getLogging().getLogstash().isEnabled()) {
+        this.applicationProperties = applicationProperties;
+        if (applicationProperties.getLogging().getLogstash().isEnabled()) {
             addLogstashAppender(context);
             addContextListener(context);
         }
-        if (albedoProperties.getMetrics().getLogs().isEnabled()) {
+        if (applicationProperties.getMetrics().getLogs().isEnabled()) {
             setMetricsMarkerLogbackFilter(context);
         }
     }
@@ -86,7 +86,7 @@ public class LoggingConfiguration {
         // Set the Logstash appender config from Albedo properties
         logstashEncoder.setCustomFields(customFields);
         // Set the Logstash appender config from Albedo properties
-        logstashAppender.addDestinations(new InetSocketAddress(albedoProperties.getLogging().getLogstash().getHost(),albedoProperties.getLogging().getLogstash().getPort()));
+        logstashAppender.addDestinations(new InetSocketAddress(applicationProperties.getLogging().getLogstash().getHost(), applicationProperties.getLogging().getLogstash().getPort()));
 
         ShortenedThrowableConverter throwableConverter = new ShortenedThrowableConverter();
         throwableConverter.setRootCauseFirst(true);
@@ -100,7 +100,7 @@ public class LoggingConfiguration {
         AsyncAppender asyncLogstashAppender = new AsyncAppender();
         asyncLogstashAppender.setContext(context);
         asyncLogstashAppender.setName(ASYNC_LOGSTASH_APPENDER_NAME);
-        asyncLogstashAppender.setQueueSize(albedoProperties.getLogging().getLogstash().getQueueSize());
+        asyncLogstashAppender.setQueueSize(applicationProperties.getLogging().getLogstash().getQueueSize());
         asyncLogstashAppender.addAppender(logstashAppender);
         asyncLogstashAppender.start();
 

@@ -26,7 +26,7 @@ import javax.validation.Valid;
  * @author lj
  * @version 2017-01-23
  */
-@ConditionalOnProperty(name = Globals.ALBEDO_QUARTZENABLED)
+@ConditionalOnProperty(name = Globals.APPLICATION_QUARTZENABLED)
 @Controller
 @RequestMapping(value = "${albedo.adminPath}/sys/taskScheduleJob")
 public class TaskScheduleJobResource extends DataVoResource<TaskScheduleJobExcutorService, TaskScheduleJobVo> {

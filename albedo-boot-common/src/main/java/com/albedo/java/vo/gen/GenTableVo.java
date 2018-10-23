@@ -9,9 +9,7 @@ import com.albedo.java.util.exception.RuntimeMsgException;
 import com.albedo.java.vo.base.DataEntityVo;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.collect.Lists;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;

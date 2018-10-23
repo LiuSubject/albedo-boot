@@ -38,8 +38,6 @@ spring:
         port: 25
         username:
         password:
-    messages:
-        cache-seconds: 1
     mvc:
 #        view:
 #            prefix: /WEB-INF/views/
@@ -59,13 +57,15 @@ server:
 #    jsp-servlet:
 #        class-name: org.apache.jasper.servlet.JspServlet
 
+logging:
+    path: .log/ua-loan-web
 
 
 # ===================================================================
 # Albedo specific properties
 # ===================================================================
 
-albedo:
+application:
     jedisKeyPrefix: albedoBootWebApp
     developMode: true
     isTokenInterceptor: false

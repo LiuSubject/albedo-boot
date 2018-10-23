@@ -44,8 +44,6 @@ spring:
         port: 25
         username:
         password:
-    messages:
-        cache-seconds: 1
     mvc:
 #        view:
 #            prefix: /WEB-INF/views/
@@ -78,11 +76,13 @@ server:
         mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json
         min-response-size: 1024
 
+logging:
+    path: /opt/tomcat8/logs/ua-loan/ua-loan-web
 # ===================================================================
 # Albedo specific properties
 # ===================================================================
 
-albedo:
+application:
     jedisKeyPrefix: albedoBootWebApp
         developMode: false
         isTokenInterceptor: false

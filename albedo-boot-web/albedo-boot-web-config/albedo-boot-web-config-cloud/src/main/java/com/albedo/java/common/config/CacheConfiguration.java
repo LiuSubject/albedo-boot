@@ -65,7 +65,7 @@ public class CacheConfiguration {
     }
 
     @Bean
-    public HazelcastInstance hazelcastInstance(AlbedoProperties albedoProperties) {
+    public HazelcastInstance hazelcastInstance(ApplicationProperties applicationProperties) {
         log.debug("Configuring Hazelcast");
         HazelcastInstance hazelCastInstance = Hazelcast.getHazelcastInstanceByName(env.getProperty("spring.application.name"));
         if (hazelCastInstance != null) {
@@ -105,7 +105,7 @@ public class CacheConfiguration {
             }
         }
         config.getMapConfigs().put("default", initializeDefaultMapConfig());
-        config.getMapConfigs().put("com.albedo.java.modules.*.domain.*", initializeDomainMapConfig(albedoProperties));
+        config.getMapConfigs().put("com.albedo.java.modules.*.domain.*", initializeDomainMapConfig(applicationProperties));
         return Hazelcast.newHazelcastInstance(config);
     }
 
@@ -139,9 +139,9 @@ public class CacheConfiguration {
         return mapConfig;
     }
 
-    private MapConfig initializeDomainMapConfig(AlbedoProperties albedoProperties) {
+    private MapConfig initializeDomainMapConfig(ApplicationProperties applicationProperties) {
         MapConfig mapConfig = new MapConfig();
-        mapConfig.setTimeToLiveSeconds(albedoProperties.getCache().getHazelcast().getTimeToLiveSeconds());
+        mapConfig.setTimeToLiveSeconds(applicationProperties.getCache().getHazelcast().getTimeToLiveSeconds());
         return mapConfig;
     }
 }

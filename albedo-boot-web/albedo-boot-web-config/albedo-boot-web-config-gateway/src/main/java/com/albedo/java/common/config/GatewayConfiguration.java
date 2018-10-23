@@ -24,8 +24,8 @@ public class GatewayConfiguration {
     public static class AccessControlFilterConfiguration {
 
         @Bean
-        public AccessControlFilter accessControlFilter(RouteLocator routeLocator, AlbedoProperties albedoProperties){
-            return new AccessControlFilter(routeLocator, albedoProperties);
+        public AccessControlFilter accessControlFilter(RouteLocator routeLocator, ApplicationProperties applicationProperties){
+            return new AccessControlFilter(routeLocator, applicationProperties);
         }
     }
 
@@ -38,15 +38,15 @@ public class GatewayConfiguration {
     @ConditionalOnProperty("albedo.gateway.rate-limiting.enabled")
     public static class RateLimitingConfiguration {
 
-        private final AlbedoProperties albedoProperties;
+        private final ApplicationProperties applicationProperties;
 
-        public RateLimitingConfiguration(AlbedoProperties albedoProperties) {
-            this.albedoProperties = albedoProperties;
+        public RateLimitingConfiguration(ApplicationProperties applicationProperties) {
+            this.applicationProperties = applicationProperties;
         }
 
         @Bean
         public RateLimitingFilter rateLimitingFilter() {
-            return new RateLimitingFilter(albedoProperties);
+            return new RateLimitingFilter(applicationProperties);
         }
     }
 }

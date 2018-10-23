@@ -9,7 +9,7 @@
  */
 package ${packageName}.${moduleName}.web<#if subModuleName != "">.${subModuleName}</#if>;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.common.persistence.DynamicSpecifications;
 import com.albedo.java.common.persistence.SpecificationDetail;
 import com.albedo.java.common.persistence.domain.BaseEntity;

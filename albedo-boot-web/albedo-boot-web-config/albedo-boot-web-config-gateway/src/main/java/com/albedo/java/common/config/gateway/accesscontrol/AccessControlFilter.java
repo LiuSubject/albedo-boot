@@ -1,6 +1,6 @@
 package com.albedo.java.common.config.gateway.accesscontrol;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import org.slf4j.Logger;
@@ -21,11 +21,11 @@ public class AccessControlFilter extends ZuulFilter {
 
     private final RouteLocator routeLocator;
 
-    private final AlbedoProperties albedoProperties;
+    private final ApplicationProperties applicationProperties;
 
-    public AccessControlFilter(RouteLocator routeLocator, AlbedoProperties albedoProperties) {
+    public AccessControlFilter(RouteLocator routeLocator, ApplicationProperties applicationProperties) {
         this.routeLocator = routeLocator;
-        this.albedoProperties = albedoProperties;
+        this.applicationProperties = applicationProperties;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class AccessControlFilter extends ZuulFilter {
     }
 
     private boolean isAuthorizedRequest(String serviceUrl, String serviceName, String requestUri) {
-        Map<String, List<String>> authorizedMicroservicesEndpoints = albedoProperties.getGateway()
+        Map<String, List<String>> authorizedMicroservicesEndpoints = applicationProperties.getGateway()
             .getAuthorizedMicroservicesEndpoints();
 
         // If the authorized endpoints list was left empty for this route, all access are allowed

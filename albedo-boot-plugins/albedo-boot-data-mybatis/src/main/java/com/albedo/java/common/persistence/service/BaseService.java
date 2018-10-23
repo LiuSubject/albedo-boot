@@ -3,6 +3,7 @@
  */
 package com.albedo.java.common.persistence.service;
 
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.common.persistence.DynamicSpecifications;
 import com.albedo.java.common.persistence.PageQuery;
 import com.albedo.java.common.persistence.SpecificationDetail;
@@ -22,7 +23,6 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -44,7 +44,7 @@ import java.util.*;
  */
 @Transactional(rollbackFor = Exception.class)
 public abstract class BaseService<Repository extends BaseRepository<T, pk>,
-        T extends GeneralEntity, pk extends Serializable> extends ServiceImpl<Repository, T> {
+    T extends GeneralEntity, pk extends Serializable> extends ServiceImpl<Repository, T> {
     public final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
     @Autowired
     public Repository repository;
@@ -52,6 +52,8 @@ public abstract class BaseService<Repository extends BaseRepository<T, pk>,
     public JpaCustomeRepository<T> jpaCustomeRepository;
     private Class<T> persistentClass;
     private String classNameProfix;
+    @Autowired
+    ApplicationProperties applicationProperties;
 
 
     @SuppressWarnings("unchecked")
@@ -61,7 +63,6 @@ public abstract class BaseService<Repository extends BaseRepository<T, pk>,
         if (type instanceof ParameterizedType) {
             Type[] parameterizedType = ((ParameterizedType) type).getActualTypeArguments();
             persistentClass = (Class<T>) parameterizedType[1];
-            classNameProfix = StringUtil.toFirstLowerCase(persistentClass.getSimpleName())+".";
         }
 
     }
@@ -71,7 +72,13 @@ public abstract class BaseService<Repository extends BaseRepository<T, pk>,
     }
 
     public String getClassNameProfix(){
+        if (persistentClass!=null && PublicUtil.isEmpty(classNameProfix)){
+            classNameProfix =  String.format(applicationProperties.getIdentifierQuote(), StringUtil.toFirstLowerCase(persistentClass.getSimpleName()))+".";
+        }
         return classNameProfix;
+    }
+    public String getClassNameProfix(String property) {
+        return String.format("%s%s", getClassNameProfix(),property);
     }
 
 
@@ -87,7 +94,7 @@ public abstract class BaseService<Repository extends BaseRepository<T, pk>,
             .toEntityWrapper();
     }
     public QueryWrapper<T> createEntityWrapper(QueryCondition... queryConditions){
-       return createEntityWrapper(null, queryConditions);
+        return createEntityWrapper(null, queryConditions);
     }
 
 
@@ -144,9 +151,14 @@ public abstract class BaseService<Repository extends BaseRepository<T, pk>,
 //	}
 
 
-    public T findOne(Map<String, Object> paramsMap) {
-        List<T> ts = repository.selectByMap(paramsMap);
-        return PublicUtil.isNotEmpty(ts) ? ts.get(0) : null;
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public T findTopOne(Wrapper<T> wrapper) {
+        return findOne(wrapper, 1);
+    }
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public T findOne(Wrapper<T> wrapper, int max) {
+        IPage<T> iPage = repository.selectPage(new PageQuery(0, max), wrapper);
+        return iPage!=null && PublicUtil.isNotEmpty(iPage.getRecords()) ? iPage.getRecords().get(0) : null;
     }
     public List<T> findAll() {
         return repository.selectList(null);
@@ -168,17 +180,17 @@ public abstract class BaseService<Repository extends BaseRepository<T, pk>,
         if (PublicUtil.isEmpty(orders)) {
             return orderList;
         }
-        for (com.albedo.java.util.domain.Order order : orders) {
+        for (Order order : orders) {
             if (order == null) {
                 continue;
             }
             String property = order.getProperty();
-            com.albedo.java.util.domain.Order.Direction direction = order.getDirection();
+            Order.Direction direction = order.getDirection();
             if (PublicUtil.isEmpty(property) || direction == null) {
                 continue;
             }
             orderList.add(new Sort.Order(direction.equals(Order.Direction.asc) ?
-                    Sort.Direction.ASC : Sort.Direction.DESC, property));
+                Sort.Direction.ASC : Sort.Direction.DESC, property));
         }
         return orderList;
     }
@@ -250,8 +262,7 @@ public abstract class BaseService<Repository extends BaseRepository<T, pk>,
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public PageModel<T> findPageWrapper(PageModel<T> pm, Wrapper<T> wrapper) {
         try {
-
-            IPage page = findAll(pm ,wrapper);
+            IPage page = findAll(pm, wrapper);
             pm.setData(page.getRecords());
             pm.setRecordsTotal(page.getTotal());
 

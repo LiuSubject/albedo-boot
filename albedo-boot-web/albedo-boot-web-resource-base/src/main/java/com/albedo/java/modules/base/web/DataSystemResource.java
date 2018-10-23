@@ -1,6 +1,6 @@
 package com.albedo.java.modules.base.web;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.common.security.SecurityUtil;
 import com.albedo.java.modules.sys.domain.Dict;
 import com.albedo.java.modules.sys.service.DictService;
@@ -35,22 +35,23 @@ public class DataSystemResource {
     private ModuleService moduleService;
     private DictService dictService;
     private OrgService orgService;
-    private AlbedoProperties albedoProperties;
+    private ApplicationProperties applicationProperties;
 
-    public DataSystemResource(ModuleService moduleService, DictService dictService, OrgService orgService, AlbedoProperties albedoProperties) {
+    public DataSystemResource(ModuleService moduleService, DictService dictService, OrgService orgService, ApplicationProperties applicationProperties) {
         this.moduleService = moduleService;
         this.dictService = dictService;
         this.orgService = orgService;
-        this.albedoProperties = albedoProperties;
+        this.applicationProperties = applicationProperties;
     }
 
     @GetMapping(value = "module/data")
     public ResponseEntity data(ModuleTreeQuery moduleTreeQuery) {
-        List<ModuleVo> rs = moduleService.findMenuDataVo(moduleTreeQuery, SecurityUtil.getModuleList());
+        List<ModuleVo> rs = moduleService.findMenuDataVo(moduleTreeQuery,
+            SecurityUtil.getModuleList(), SecurityUtil.getModuleAllList());
         List<ModuleVo> list = Lists.newArrayList();
         PublicUtil.sortTreeList(list,  rs, ModuleVo.ROOT_ID, false);
         Map<String, Object> rsMap = Maps.newHashMap();
-        rsMap.put("gatewayModel",albedoProperties.getGatewayModel());
+        rsMap.put("gatewayModel", applicationProperties.getGatewayModel());
         rsMap.put("moduleList",list);
         return ResultBuilder.buildOk(rsMap);
     }

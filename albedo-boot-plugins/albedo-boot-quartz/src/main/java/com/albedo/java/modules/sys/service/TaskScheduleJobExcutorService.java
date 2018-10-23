@@ -34,7 +34,7 @@ import java.util.Set;
  * @author lj
  * @version 2017-01-23
  */
-@ConditionalOnProperty(name = Globals.ALBEDO_QUARTZENABLED)
+@ConditionalOnProperty(name = Globals.APPLICATION_QUARTZENABLED)
 @Service
 @BaseInit
 public class TaskScheduleJobExcutorService extends DataVoService<TaskScheduleJobRepository,

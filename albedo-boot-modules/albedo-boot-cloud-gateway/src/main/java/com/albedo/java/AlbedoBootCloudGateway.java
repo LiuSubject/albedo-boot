@@ -1,6 +1,6 @@
 package com.albedo.java;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.util.domain.Globals;
 import com.albedo.java.util.spring.DefaultProfileUtil;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ import java.util.Collection;
  * @author somewhere
  */
 @SpringBootApplication
-@EnableConfigurationProperties({AlbedoProperties.class})
+@EnableConfigurationProperties({ApplicationProperties.class})
 @EnableDiscoveryClient
 @EnableZuulProxy
 public class AlbedoBootCloudGateway {

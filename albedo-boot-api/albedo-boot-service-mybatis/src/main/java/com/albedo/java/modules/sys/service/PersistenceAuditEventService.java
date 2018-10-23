@@ -47,4 +47,9 @@ public class PersistenceAuditEventService extends BaseService<PersistenceAuditEv
         );
     }
 
+    public PersistentAuditEvent findByPrincipalLast(String principal) {
+        return findTopOne(new QueryWrapper<PersistentAuditEvent>().eq(PersistentAuditEvent.F_SQL_PRINCIPAL, principal)
+            .orderByDesc(PersistentAuditEvent.F_AUDITEVENTDATE));
+    }
+
 }

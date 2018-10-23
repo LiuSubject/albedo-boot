@@ -1,7 +1,7 @@
 package com.albedo.java.web.rest;
 
 import com.albedo.java.AlbedoBootWebApp;
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.common.persistence.DynamicSpecifications;
 import com.albedo.java.common.persistence.SpecificationDetail;
 import com.albedo.java.common.persistence.domain.BaseEntity;
@@ -87,7 +87,7 @@ public class OrgResourceIntTest {
 
 
     @Autowired
-    private AlbedoProperties albedoProperties;
+    private ApplicationProperties applicationProperties;
 
     private MockMvc restOrgMockMvc;
 
@@ -95,11 +95,11 @@ public class OrgResourceIntTest {
 
     @Before
     public void setup() {
-        DEFAULT_API_URL = albedoProperties.getAdminPath("/sys/org/");
+        DEFAULT_API_URL = applicationProperties.getAdminPath("/sys/org/");
         MockitoAnnotations.initMocks(this);
         final OrgResource orgResource = new OrgResource(orgService);
         this.restOrgMockMvc = MockMvcBuilders.standaloneSetup(orgResource)
-            .addPlaceholderValue("albedo.adminPath", albedoProperties.getAdminPath())
+            .addPlaceholderValue("albedo.adminPath", applicationProperties.getAdminPath())
 //            .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())

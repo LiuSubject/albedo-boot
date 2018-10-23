@@ -33,8 +33,12 @@ public class User extends IdEntity<User, String> {
 
     /*** F_LOGINID */
     public static final String F_LOGINID = "loginId";
-    /*** F_LOGINID */
+    /*** F_SQL_LOGINID */
+    public static final String F_SQL_LOGINID = "login_id";
+    /*** F_EMAIL */
     public static final String F_EMAIL = "email";
+    /*** F_SQL_PHONE */
+    public static final String F_SQL_PHONE = "phone_";
     private static final long serialVersionUID = 1L;
 
     @TableField("avatar_")

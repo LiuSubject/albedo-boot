@@ -70,6 +70,12 @@ public abstract class TreeService<Repository extends TreeRepository<T, PK>, T ex
                 .orderByAsc(getClassNameProfix()+TreeEntity.F_SQL_SORT)
         );
     }
+    public List<T> findAllByStatusNotOrderBySort(Integer status){
+        return repository.findRelationList(
+            new QueryWrapper<T>().ne(getClassNameProfix()+TreeEntity.F_SQL_STATUS, status)
+                .orderByAsc(getClassNameProfix()+TreeEntity.F_SQL_SORT)
+        );
+    }
     public List<T> findAllByIdOrParentIdsLike(PK id, String likeParentIds){
         return repository.findRelationList(
             new QueryWrapper<T>().eq(getClassNameProfix()+TreeEntity.F_SQL_PARENTIDS, likeParentIds).or()
@@ -229,6 +235,7 @@ public abstract class TreeService<Repository extends TreeRepository<T, PK>, T ex
         Assert.assertNotNull(lastModifiedBy, "lastModifiedBy 信息为空，操作失败");
         ids.forEach(id -> lockOrUnLockByParentIds(id, lastModifiedBy));
     }
+
 
 
 }

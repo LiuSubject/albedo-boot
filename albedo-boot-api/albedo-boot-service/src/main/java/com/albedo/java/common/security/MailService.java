@@ -1,6 +1,6 @@
 package com.albedo.java.common.security;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.modules.sys.domain.User;
 import com.albedo.java.util.MailUtil;
 import com.albedo.java.util.StringUtil;
@@ -33,17 +33,17 @@ public class MailService {
 
     private static final String BASE_URL = "baseUrl";
 
-    private final AlbedoProperties albedoProperties;
+    private final ApplicationProperties applicationProperties;
 
     private final JavaMailSender javaMailSender;
 
     private final MessageSource messageSource;
 
 
-    public MailService(AlbedoProperties albedoProperties, JavaMailSender javaMailSender,
+    public MailService(ApplicationProperties applicationProperties, JavaMailSender javaMailSender,
                        MessageSource messageSource) {
 
-        this.albedoProperties = albedoProperties;
+        this.applicationProperties = applicationProperties;
         this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
     }
@@ -58,7 +58,7 @@ public class MailService {
         try {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, CharEncoding.UTF_8);
             message.setTo(to);
-            message.setFrom(albedoProperties.getMail().getFrom());
+            message.setFrom(applicationProperties.getMail().getFrom());
             message.setSubject(subject);
             message.setText(content, isHtml);
             javaMailSender.send(mimeMessage);
@@ -77,7 +77,7 @@ public class MailService {
         Locale locale = Locale.forLanguageTag(user.getLangKey());
         Map<String, Object> model = Maps.newHashMap();
         model.put(USER, user);
-        model.put(BASE_URL, albedoProperties.getMail().getBaseUrl());
+        model.put(BASE_URL, applicationProperties.getMail().getBaseUrl());
         String content = FreeMarkers.renderString(StringUtil.trimToEmpty(MailUtil.fileToString(templateName)), model);
         String subject = messageSource.getMessage(titleKey, null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);

@@ -8,7 +8,7 @@ import com.albedo.java.common.security.SecurityUtil;
 import com.albedo.java.common.security.jwt.JWTConfigurer;
 import com.albedo.java.common.security.jwt.TokenProvider;
 import com.albedo.java.common.security.service.InvocationSecurityMetadataSourceService;
-import com.albedo.java.util.JedisUtil;
+import com.albedo.java.util.RedisUtil;
 import com.albedo.java.util.domain.GlobalJedis;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.BeanInitializationException;
@@ -50,20 +50,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final CustomizeAccessDecisionManager customizeAccessDecisionManager;
     private final InvocationSecurityMetadataSourceService invocationSecurityMetadataSourceService;
-    private final AlbedoProperties albedoProperties;
+    private final ApplicationProperties applicationProperties;
     private final UserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
     private final CorsFilter corsFilter;
 
     public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder, CustomizeAccessDecisionManager customizeAccessDecisionManager,
                                  InvocationSecurityMetadataSourceService invocationSecurityMetadataSourceService,
-                                 AlbedoProperties albedoProperties,
+                                 ApplicationProperties applicationProperties,
                                  UserDetailsService userDetailsService,
                                  TokenProvider tokenProvider, CorsFilter corsFilter) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.customizeAccessDecisionManager = customizeAccessDecisionManager;
         this.invocationSecurityMetadataSourceService = invocationSecurityMetadataSourceService;
-        this.albedoProperties = albedoProperties;
+        this.applicationProperties = applicationProperties;
         this.userDetailsService = userDetailsService;
         this.tokenProvider = tokenProvider;
         this.corsFilter = corsFilter;
@@ -104,14 +104,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     @ConditionalOnMissingBean
     public AuthenticationEntryPoint authenticationEntryPoint(){
-        return new Http401UnauthorizedEntryPoint(albedoProperties);
+        return new Http401UnauthorizedEntryPoint(applicationProperties);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        List<String> authorizes = albedoProperties.getSecurity().getAuthorizes();
-        authorizes.add(albedoProperties.getAdminPath("/**"));
+        List<String> authorizes = applicationProperties.getSecurity().getAuthorizes();
+        authorizes.add(applicationProperties.getAdminPath("/**"));
         authorizes.addAll(Lists.newArrayList(SecurityConstants.authorize));
         SecurityConstants.authorize = new String[authorizes.size()];
         authorizes.toArray(SecurityConstants.authorize);
@@ -129,9 +129,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers(albedoProperties.getAdminPath(SecurityConstants.loginUrl)).permitAll()
-            .antMatchers(albedoProperties.getAdminPath(SecurityConstants.authLogin)).permitAll()
-            .antMatchers(albedoProperties.getAdminPath(SecurityConstants.logoutUrl)).permitAll()
+            .antMatchers(applicationProperties.getAdminPath(SecurityConstants.loginUrl)).permitAll()
+            .antMatchers(applicationProperties.getAdminPath(SecurityConstants.authLogin)).permitAll()
+            .antMatchers(applicationProperties.getAdminPath(SecurityConstants.logoutUrl)).permitAll()
             .antMatchers(SecurityConstants.authorizePermitAll).permitAll()
             .antMatchers(SecurityConstants.authorize).authenticated()
             .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
@@ -152,7 +152,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private JWTConfigurer securityConfigurerAdapter() {
-        return new JWTConfigurer(tokenProvider, albedoProperties);
+        return new JWTConfigurer(tokenProvider, applicationProperties);
     }
 
     @Bean
@@ -164,7 +164,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void afterPropertiesSet() {
 
         SecurityUtil.clearUserJedisCache();
-        JedisUtil.removeSys(GlobalJedis.RESOURCE_MODULE_DATA_MAP);
+        RedisUtil.removeSys(GlobalJedis.RESOURCE_MODULE_DATA_MAP);
         invocationSecurityMetadataSourceService.getResourceMap();
     }
 

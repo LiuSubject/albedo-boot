@@ -12,15 +12,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Properties specific to Albedo.
+ * Properties specific to albedo.
  * <p>
  * <p>
  * Properties are configured in the application.yml file.
  * </p>
  */
-@ConfigurationProperties(prefix = "albedo", ignoreInvalidFields = true)
+@ConfigurationProperties(prefix = "application", ignoreInvalidFields = true)
 @Data
-public class AlbedoProperties {
+public class ApplicationProperties {
 
     private final Async async = new Async();
     private final Http http = new Http();
@@ -30,14 +30,14 @@ public class AlbedoProperties {
     private final Metrics metrics = new Metrics();
     private final CorsConfiguration cors = new CorsConfiguration();
     private final Logging logging = new Logging();
-    private final AlbedoProperties.Gateway gateway = new AlbedoProperties.Gateway();
-    private final AlbedoProperties.Ribbon ribbon = new AlbedoProperties.Ribbon();
-    private final AlbedoProperties.Registry registry = new AlbedoProperties.Registry();
+    private final Gateway gateway = new Gateway();
+    private final Ribbon ribbon = new Ribbon();
+    private final Registry registry = new Registry();
 
     private String adminPath = "/a";
     private String frontPath = "/f";
     private String defaultView;
-    private String application = "albedo";
+    private String name = "albedo";
     private String jedisKeyPrefix = "";
     private String urlSuffix = ".html";
     private Boolean gatewayModel = false;
@@ -49,6 +49,7 @@ public class AlbedoProperties {
     private Boolean cluster = false;
     private String freeURL = "";
     private String staticFileDirectory = "";
+    private String identifierQuote = "";
 
     public String getAdminPath(String strs) {
         return PublicUtil.toAppendStr(adminPath, strs);
@@ -93,13 +94,13 @@ public class AlbedoProperties {
     }
 
     public static class Gateway {
-        private final AlbedoProperties.Gateway.RateLimiting rateLimiting = new AlbedoProperties.Gateway.RateLimiting();
+        private final RateLimiting rateLimiting = new RateLimiting();
         private Map<String, List<String>> authorizedMicroservicesEndpoints = new LinkedHashMap();
 
         public Gateway() {
         }
 
-        public AlbedoProperties.Gateway.RateLimiting getRateLimiting() {
+        public RateLimiting getRateLimiting() {
             return this.rateLimiting;
         }
 
@@ -179,22 +180,22 @@ public class AlbedoProperties {
 
     public static class Http {
 
-        private final AlbedoProperties.Http.Cache cache = new AlbedoProperties.Http.Cache();
-        public AlbedoProperties.Http.Version version;
+        private final Cache cache = new Cache();
+        public Version version;
 
         public Http() {
-            this.version = AlbedoProperties.Http.Version.V_1_1;
+            this.version = Version.V_1_1;
         }
 
-        public AlbedoProperties.Http.Cache getCache() {
+        public Cache getCache() {
             return this.cache;
         }
 
-        public AlbedoProperties.Http.Version getVersion() {
+        public Version getVersion() {
             return this.version;
         }
 
-        public void setVersion(AlbedoProperties.Http.Version version) {
+        public void setVersion(Version version) {
             this.version = version;
         }
 
@@ -224,31 +225,31 @@ public class AlbedoProperties {
 
     public static class Cache {
 
-        private final AlbedoProperties.Cache.Hazelcast hazelcast = new AlbedoProperties.Cache.Hazelcast();
-        private final AlbedoProperties.Cache.Ehcache ehcache = new AlbedoProperties.Cache.Ehcache();
-        private final AlbedoProperties.Cache.Infinispan infinispan = new AlbedoProperties.Cache.Infinispan();
+        private final Hazelcast hazelcast = new Hazelcast();
+        private final Ehcache ehcache = new Ehcache();
+        private final Infinispan infinispan = new Infinispan();
 
         public Cache() {
         }
 
-        public AlbedoProperties.Cache.Hazelcast getHazelcast() {
+        public Hazelcast getHazelcast() {
             return this.hazelcast;
         }
 
-        public AlbedoProperties.Cache.Ehcache getEhcache() {
+        public Ehcache getEhcache() {
             return this.ehcache;
         }
 
-        public AlbedoProperties.Cache.Infinispan getInfinispan() {
+        public Infinispan getInfinispan() {
             return this.infinispan;
         }
 
         public static class Infinispan {
             private String configFile = "default-configs/default-jgroups-tcp.xml";
             private boolean statsEnabled;
-            private final AlbedoProperties.Cache.Infinispan.Local local = new AlbedoProperties.Cache.Infinispan.Local();
-            private final AlbedoProperties.Cache.Infinispan.Distributed distributed = new AlbedoProperties.Cache.Infinispan.Distributed();
-            private final AlbedoProperties.Cache.Infinispan.Replicated replicated = new AlbedoProperties.Cache.Infinispan.Replicated();
+            private final Local local = new Local();
+            private final Distributed distributed = new Distributed();
+            private final Replicated replicated = new Replicated();
 
             public Infinispan() {
             }
@@ -269,15 +270,15 @@ public class AlbedoProperties {
                 this.statsEnabled = statsEnabled;
             }
 
-            public AlbedoProperties.Cache.Infinispan.Local getLocal() {
+            public Local getLocal() {
                 return this.local;
             }
 
-            public AlbedoProperties.Cache.Infinispan.Distributed getDistributed() {
+            public Distributed getDistributed() {
                 return this.distributed;
             }
 
-            public AlbedoProperties.Cache.Infinispan.Replicated getReplicated() {
+            public Replicated getReplicated() {
                 return this.replicated;
             }
 
@@ -439,23 +440,23 @@ public class AlbedoProperties {
 
     public static class Security {
 
-        private final AlbedoProperties.Security.RememberMe rememberMe = new AlbedoProperties.Security.RememberMe();
-        private final AlbedoProperties.Security.ClientAuthorization clientAuthorization = new AlbedoProperties.Security.ClientAuthorization();
-        private final AlbedoProperties.Security.Authentication authentication = new AlbedoProperties.Security.Authentication();
+        private final RememberMe rememberMe = new RememberMe();
+        private final ClientAuthorization clientAuthorization = new ClientAuthorization();
+        private final Authentication authentication = new Authentication();
 
         private List<String> authorizes = new ArrayList<>();
         public Security() {
         }
 
-        public AlbedoProperties.Security.RememberMe getRememberMe() {
+        public RememberMe getRememberMe() {
             return this.rememberMe;
         }
 
-        public AlbedoProperties.Security.ClientAuthorization getClientAuthorization() {
+        public ClientAuthorization getClientAuthorization() {
             return this.clientAuthorization;
         }
 
-        public AlbedoProperties.Security.Authentication getAuthentication() {
+        public Authentication getAuthentication() {
             return this.authentication;
         }
 
@@ -484,17 +485,17 @@ public class AlbedoProperties {
         }
 
         public static class Authentication {
-            private final AlbedoProperties.Security.Authentication.Oauth oauth = new AlbedoProperties.Security.Authentication.Oauth();
-            private final AlbedoProperties.Security.Authentication.Jwt jwt = new AlbedoProperties.Security.Authentication.Jwt();
+            private final Oauth oauth = new Oauth();
+            private final Jwt jwt = new Jwt();
 
             public Authentication() {
             }
 
-            public AlbedoProperties.Security.Authentication.Oauth getOauth() {
+            public Oauth getOauth() {
                 return this.oauth;
             }
 
-            public AlbedoProperties.Security.Authentication.Jwt getJwt() {
+            public Jwt getJwt() {
                 return this.jwt;
             }
 
@@ -688,7 +689,7 @@ public class AlbedoProperties {
 
             private int port = 2003;
 
-            private String prefix = "albedoAlbedo";
+            private String prefix = "albedoalbedo";
 
             public boolean isEnabled() {
                 return enabled;

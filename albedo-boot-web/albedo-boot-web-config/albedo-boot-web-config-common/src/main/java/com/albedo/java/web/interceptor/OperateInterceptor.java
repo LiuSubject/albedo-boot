@@ -1,6 +1,6 @@
 package com.albedo.java.web.interceptor;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.util.DateUtil;
 import com.albedo.java.util.PublicUtil;
 import com.albedo.java.util.StringUtil;
@@ -37,9 +37,9 @@ public class OperateInterceptor implements HandlerInterceptor {
     private boolean isTokenInterceptor;
     private String freeURL;
 
-    public OperateInterceptor(AlbedoProperties albedoProperties) {
-        isTokenInterceptor = albedoProperties.getIsTokenInterceptor();
-        freeURL = albedoProperties.getFreeURL();
+    public OperateInterceptor(ApplicationProperties applicationProperties) {
+        isTokenInterceptor = applicationProperties.getIsTokenInterceptor();
+        freeURL = applicationProperties.getFreeURL();
     }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

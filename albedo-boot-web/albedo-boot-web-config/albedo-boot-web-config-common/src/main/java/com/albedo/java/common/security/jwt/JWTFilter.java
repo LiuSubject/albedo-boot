@@ -1,9 +1,8 @@
 package com.albedo.java.common.security.jwt;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.common.security.SecurityConstants;
 import com.albedo.java.web.rest.util.CookieUtil;
-import com.albedo.java.web.rest.util.RequestUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -25,11 +24,11 @@ public class JWTFilter extends GenericFilterBean {
 
     private TokenProvider tokenProvider;
 
-    private AlbedoProperties albedoProperties;
+    private ApplicationProperties applicationProperties;
 
-    public JWTFilter(TokenProvider tokenProvider, AlbedoProperties albedoProperties) {
+    public JWTFilter(TokenProvider tokenProvider, ApplicationProperties applicationProperties) {
         this.tokenProvider = tokenProvider;
-        this.albedoProperties = albedoProperties;
+        this.applicationProperties = applicationProperties;
     }
 
     @Override

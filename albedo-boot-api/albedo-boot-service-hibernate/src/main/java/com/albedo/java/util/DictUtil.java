@@ -37,8 +37,8 @@ public class DictUtil {
             dataMap.remove(CACHE_DICT_MAP);
             dataMap.remove(CACHE_DICT_LIST);
         }
-        JedisUtil.removeUser(CACHE_DICT_LIST);
-        JedisUtil.removeUser(CACHE_DICT_MAP);
+        RedisUtil.removeUser(CACHE_DICT_LIST);
+        RedisUtil.removeUser(CACHE_DICT_MAP);
     }
 
     /**
@@ -48,17 +48,17 @@ public class DictUtil {
         String dictListJson = null;
         List<Dict> dictList = null;
         if (cluster) {
-            dictListJson = JedisUtil.getUserStr(CACHE_DICT_LIST);
+            dictListJson = RedisUtil.getUserStr(CACHE_DICT_LIST);
         } else {
             dictListJson = dataMap.get(CACHE_DICT_LIST);
             if (PublicUtil.isEmpty(dictListJson))
-                dictListJson = JedisUtil.getUserStr(CACHE_DICT_LIST);
+                dictListJson = RedisUtil.getUserStr(CACHE_DICT_LIST);
         }
 
         if (PublicUtil.isEmpty(dictListJson)) {
             dictList = dictService.findAllByStatusNotAndIsShowOrderBySortAsc(Dict.FLAG_DELETE, SystemConfig.YES);
             dictListJson = Json.toJSONString(dictList, Dict.F_PARENT, Dict.F_CREATOR, Dict.F_MODIFIER);
-            JedisUtil.putUser(CACHE_DICT_LIST, dictListJson);
+            RedisUtil.putUser(CACHE_DICT_LIST, dictListJson);
         }
 
         if (!cluster && PublicUtil.isNotEmpty(dictListJson)) {
@@ -78,11 +78,11 @@ public class DictUtil {
         Map<String, List<Dict>> dictMap = Maps.newHashMap();
         String dictMapJson = null;
         if (cluster) {
-            dictMapJson = JedisUtil.getUserStr(CACHE_DICT_MAP);
+            dictMapJson = RedisUtil.getUserStr(CACHE_DICT_MAP);
         } else {
             dictMapJson = dataMap.get(CACHE_DICT_MAP);
             if (PublicUtil.isEmpty(dictMapJson))
-                dictMapJson = JedisUtil.getUserStr(CACHE_DICT_MAP);
+                dictMapJson = RedisUtil.getUserStr(CACHE_DICT_MAP);
         }
         if (PublicUtil.isEmpty(dictMapJson) || dictMapJson.equals("{}")) {
             String parentCode = null;
@@ -99,7 +99,7 @@ public class DictUtil {
                 }
             }
             dictMapJson = Json.toJSONString(dictMap, Dict.F_PARENT, Dict.F_CREATOR, Dict.F_MODIFIER);
-            JedisUtil.putUser(CACHE_DICT_MAP, dictMapJson);
+            RedisUtil.putUser(CACHE_DICT_MAP, dictMapJson);
         }
 
         if (!cluster && PublicUtil.isNotEmpty(dictMapJson)) {
