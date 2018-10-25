@@ -2,7 +2,6 @@ package com.albedo.java.common.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@ConfigurationProperties(prefix = "albedo.swagger", ignoreUnknownFields = false)
+@ConfigurationProperties(prefix = "application.swagger", ignoreUnknownFields = false)
 @Data
 public class AlbedoSwaggerProperties {
     private String title = "Application API";
