@@ -1,6 +1,6 @@
 package com.albedo.java.modules.sys.service;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.common.persistence.DynamicSpecifications;
 import com.albedo.java.common.persistence.domain.BaseEntity;
 import com.albedo.java.common.persistence.service.TreeVoService;
@@ -31,7 +31,7 @@ import java.util.List;
 public class ModuleService extends TreeVoService<ModuleRepository, Module, String, ModuleVo>{
 
     @Resource
-    AlbedoProperties albedoProperties;
+    ApplicationProperties applicationProperties;
 
     @Override
     public void copyVoToBean(ModuleVo moduleVo, Module module) {
@@ -87,7 +87,7 @@ public class ModuleService extends TreeVoService<ModuleRepository, Module, Strin
                     .filter(item->ModuleVo.TYPE_MENU.equals(item.getType()) && item.getParentIds().startsWith(moduleVo.getParentIds()+moduleVo.getId())).count()<1);
                 moduleVo.setMenuTop(ModuleVo.ROOT_ID.equals(moduleVo.getParentId()));
                 moduleVo.setShow(e.isShow());
-                if(albedoProperties.getGatewayModel()){
+                if(applicationProperties.getGatewayModel()){
                     moduleVo.setMicroservice(e.getMicroservice());
                 }
                 moduleVo.setHref(e.getHref());
@@ -222,6 +222,81 @@ public class ModuleService extends TreeVoService<ModuleRepository, Module, Strin
 
     public List<Module> findAllByStatusOrderBySort(Integer flagNormal) {
         return repository.findAllByStatusOrderBySort(flagNormal);
+    }
+
+    public List<ModuleVo> findMenuDataVo(ModuleTreeQuery moduleTreeQuery,
+                                         List<Module> resourceList,
+                                         List<Module> resourceAllList) {
+        String type = moduleTreeQuery != null ? moduleTreeQuery.getType() : null,
+            all = moduleTreeQuery != null ? moduleTreeQuery.getAll() : null;
+
+        List<ModuleVo> mapList = Lists.newArrayList();
+        for (Module e : resourceList) {
+            if("编辑用户".equals(e.getName())){
+                System.out.println(e);
+            }
+            if ((all != null || (all == null && BaseEntity.FLAG_NORMAL.equals(e.getStatus())))) {
+                if ("menu".equals(type) && !Module.TYPE_MENU.equals(e.getType())) {
+                    continue;
+                }
+                if (moduleTreeQuery != null && moduleTreeQuery.getRoot() && PublicUtil.isEmpty(e.getParentId())) {
+                    continue;
+                }
+                mapList.add(copy(e, resourceList));
+            }
+        }
+        List<String> parentIdList = Lists.newArrayList();
+        for(ModuleVo resourceVo : mapList){
+            if(resourceVo.getParentIds()!=null){
+                String[] parentIds = resourceVo.getParentIds().split(",");
+                for(String parentId : parentIds){
+                    if(!parentIdList.contains(parentId)){
+                        parentIdList.add(parentId);
+                    }
+                }
+            }
+
+        }
+        if(PublicUtil.isNotEmpty(parentIdList)){
+            for(String parenId: parentIdList){
+                if(!contain(parenId, mapList)){
+                    ModuleVo copy = copy(get(parenId, resourceAllList), resourceAllList);
+                    if(copy!=null){
+                        mapList.add(copy);
+                    }
+                }
+            }
+        }
+        return mapList;
+    }
+
+    private boolean contain(String id, List<ModuleVo> resourceList){
+        for(ModuleVo resource : resourceList){
+            if(resource.getId().equals(id)){
+                return true;
+            }
+        }
+        return false;
+    }
+    private Module get(String id, List<Module> resourceList){
+        for(Module resource : resourceList){
+            if(resource.getId().equals(id)){
+                return resource;
+            }
+        }
+        return null;
+    }
+    private ModuleVo copy(Module e, List<Module> resourceList){
+        if(e == null){
+            return null;
+        }
+        ModuleVo resourceVo = copyBeanToVo(e);
+        resourceVo.setMenuLeaf(resourceList.stream()
+            .filter(item->
+                ModuleVo.TYPE_MENU.equals(item.getType()) && PublicUtil.isNotEmpty(item.getParentIds()) && item.getParentIds().startsWith(resourceVo.getParentIds()+ resourceVo.getId())).count()<1);
+        resourceVo.setMenuTop(ModuleVo.ROOT_ID.equals(resourceVo.getParentId()));
+        resourceVo.setHref(e.getHref());
+        return resourceVo;
     }
 
 

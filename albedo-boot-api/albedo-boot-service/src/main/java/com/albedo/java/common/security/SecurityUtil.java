@@ -379,7 +379,7 @@ public final class SecurityUtil {
             logger.error("login user is null, put userCache failed");
         } else {
             // RedisUtil.mapObjectPut(USER_CACHE, PublicUtil.toAppendStr("_",
-            // T, "_", userId), value);
+            // NoDefaultJCacheRegionFactory, "_", userId), value);
             String realKey = getUserKey(key, userId);
             if (!applicationProperties.getCluster()) {
                 dataMap.put(realKey, value);
@@ -410,7 +410,7 @@ public final class SecurityUtil {
         // String temp = null;
         // while (keys.hasNext()) {
         // temp = keys.next();
-        // if (temp.contains(PublicUtil.toAppendStr("_", T, "_", userId))) {
+        // if (temp.contains(PublicUtil.toAppendStr("_", NoDefaultJCacheRegionFactory, "_", userId))) {
         // RedisUtil.mapObjectRemove(USER_CACHE, temp);
         // }
         // }

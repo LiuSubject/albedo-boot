@@ -203,7 +203,7 @@ public class UserService extends DataVoService<UserRepository, User, String, Use
         );
     }
 
-    public UserVo findOneByLoginId(String loginId) {
+    public UserVo findOneVoByLoginId(String loginId) {
         return copyBeanToVo(repository.selectOne(new QueryWrapper<User>().eq(User.F_SQL_LOGINID, loginId)));
     }
     @Override

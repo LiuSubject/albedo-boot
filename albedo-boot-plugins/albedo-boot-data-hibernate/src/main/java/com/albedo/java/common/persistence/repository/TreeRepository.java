@@ -23,11 +23,14 @@ public interface TreeRepository<T extends TreeEntity, PK extends Serializable> e
 
     List<T> findAllByParentIdAndStatusNot(String parentId, Integer status);
 
-    List<T> findAllByStatusNotOrderBySort(Integer status);
 
     T findTopByParentIdAndStatusNotOrderBySortDesc(String parentId, Integer status);
 
     List<T> findTop1ByParentIdAndStatusNotOrderBySortDesc(String parentId, Integer flagDelete);
 
     Long countByParentIdAndStatusNot(String parentId, Integer flagDelete);
+
+    List<T> findAllByStatusNotOrderBySort(Integer status);
+
+    List<T> findAllByStatusOrderBySortAsc(Integer status);
 }

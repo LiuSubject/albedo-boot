@@ -10,6 +10,8 @@ import com.albedo.java.vo.sys.FileDataVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 /**
  * 文件管理Service 文件管理
@@ -21,4 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class FileDataService extends DataVoService<FileDataRepository, FileData, String, FileDataVo>{
 
 
+    public void saveOrUpdateBatch(List<FileData> fileDataList) {
+        repository.saveAll(fileDataList);
+    }
 }

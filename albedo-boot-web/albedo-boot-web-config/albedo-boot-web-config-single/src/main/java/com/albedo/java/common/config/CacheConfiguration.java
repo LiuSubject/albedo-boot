@@ -1,12 +1,14 @@
 package com.albedo.java.common.config;
 
+import com.albedo.java.common.config.jcache.BeanClassLoaderAwareJCacheRegionFactory;
 import com.albedo.java.modules.sys.domain.Dict;
 import com.albedo.java.modules.sys.domain.Module;
 import com.albedo.java.modules.sys.domain.Role;
 import com.albedo.java.modules.sys.domain.User;
+import com.albedo.java.modules.sys.repository.UserRepository;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.expiry.Duration;
 import org.ehcache.expiry.Expirations;
 import org.ehcache.jsr107.Eh107Configuration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -18,6 +20,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @ConditionalOnClass({javax.cache.configuration.Configuration.class,Eh107Configuration.class})
@@ -31,20 +34,22 @@ public class CacheConfiguration {
     private final javax.cache.configuration.Configuration<Object, Object> jcacheConfiguration;
 
     public CacheConfiguration(ApplicationProperties applicationProperties) {
+        BeanClassLoaderAwareJCacheRegionFactory.setBeanClassLoader(this.getClass().getClassLoader());
         ApplicationProperties.Cache.Ehcache ehcache =
-                applicationProperties.getCache().getEhcache();
+            applicationProperties.getCache().getEhcache();
 
         jcacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
-                CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
-                        ResourcePoolsBuilder.heap(ehcache.getMaxEntries()))
-                        .withExpiry(Expirations.timeToLiveExpiration(Duration.of(ehcache.getTimeToLiveSeconds(), TimeUnit.SECONDS)))
-                        .build());
+            CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
+                ResourcePoolsBuilder.heap(ehcache.getMaxEntries()))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcache.getTimeToLiveSeconds())))
+                .build());
     }
 
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
 
         return cm -> {
+            cm.createCache(UserRepository.USERS_BY_LOGIN_CACHE, jcacheConfiguration);
             cm.createCache(User.class.getName(), jcacheConfiguration);
             cm.createCache(Role.class.getName(), jcacheConfiguration);
             cm.createCache(Module.class.getName(), jcacheConfiguration);

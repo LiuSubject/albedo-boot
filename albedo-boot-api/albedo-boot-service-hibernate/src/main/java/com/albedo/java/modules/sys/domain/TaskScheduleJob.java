@@ -7,6 +7,7 @@ import com.albedo.java.common.persistence.domain.DataEntity;
 import com.albedo.java.common.persistence.pk.IdGen;
 import com.albedo.java.util.annotation.DictType;
 import com.albedo.java.util.annotation.SearchField;
+import lombok.Data;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -31,6 +32,7 @@ import javax.persistence.*;
 @DynamicInsert
 @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Data
 public class TaskScheduleJob extends DataEntity {
 
     /**
@@ -40,7 +42,7 @@ public class TaskScheduleJob extends DataEntity {
     /**
      * F_GROUP group_ : 分组
      */
-    public static final String F_GROUP = "group";
+    public static final String F_JOBGROUP = "jobGroup";
     /**
      * F_STARTSTATUS start_status : 是否启动
      */
@@ -89,8 +91,8 @@ public class TaskScheduleJob extends DataEntity {
      * group 分组
      */
     @Size(max = 255)
-    @Column(name = "group_", unique = false, nullable = true, length = 255)
-    private String group;
+    @Column(name = "job_group")
+    private String jobGroup;
     /**
      * jobStatus 任务状态
      */
@@ -151,164 +153,12 @@ public class TaskScheduleJob extends DataEntity {
         this.id = IdGen.uuid();
     }
 
-    /**
-     * id id_
-     */
-    public String getId() {
-        return this.id;
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
-
-    /**
-     * id id_
-     */
-    public void setId(String value) {
-        this.id = value;
-    }
-
-    /**
-     * name 名称
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * name 名称
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
-
-    /**
-     * group 分组
-     */
-    public String getGroup() {
-        return this.group;
-    }
-
-    /**
-     * group 分组
-     */
-    public void setGroup(String value) {
-        this.group = value;
-    }
-
-    /**
-     * cronExpression cron表达式
-     */
-    public String getCronExpression() {
-        return this.cronExpression;
-    }
-
-    /**
-     * cronExpression cron表达式
-     */
-    public void setCronExpression(String value) {
-        this.cronExpression = value;
-    }
-
-    /**
-     * beanClass 调用类名
-     */
-    public String getBeanClass() {
-        return this.beanClass;
-    }
-
-    /**
-     * beanClass 调用类名
-     */
-    public void setBeanClass(String value) {
-        this.beanClass = value;
-    }
-
-    /**
-     * isConcurrent 是否当前任务
-     */
-    public Integer getIsConcurrent() {
-        return this.isConcurrent;
-    }
-
-    /**
-     * isConcurrent 是否当前任务
-     */
-    public void setIsConcurrent(Integer value) {
-        this.isConcurrent = value;
-    }
-
-    public String getJobStatus() {
-        return jobStatus;
-    }
-
-    public void setJobStatus(String jobStatus) {
-        this.jobStatus = jobStatus;
-    }
-
-    /**
-     * springId spring bean
-     */
-    public String getSpringId() {
-        return this.springId;
-    }
-
-    /**
-     * springId spring bean
-     */
-    public void setSpringId(String value) {
-        this.springId = value;
-    }
-
-    /**
-     * methodName 调用方法名
-     */
-    public String getMethodName() {
-        return this.methodName;
-    }
-
-    /**
-     * methodName 调用方法名
-     */
-    public void setMethodName(String value) {
-        this.methodName = value;
-    }
-
-    public String getSourceId() {
-        return sourceId;
-    }
-
-    public void setSourceId(String sourceId) {
-        this.sourceId = sourceId;
-    }
-
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("id", getId()).append("name", getName())
-                .append("group", getGroup()).append("jobStatus", getJobStatus())
-                .append("cronExpression", getCronExpression()).append("beanClass", getBeanClass())
-                .append("isConcurrent", getIsConcurrent()).append("springId", getSpringId())
-                .append("methodName", getMethodName()).append("createdBy", getCreatedBy())
-                .append("createdDate", getCreatedDate()).append("lastModifiedBy", getLastModifiedBy())
-                .append("lastModifiedDate", getLastModifiedDate()).append("status", getStatus())
-                .append("description", getDescription()).append("version", getVersion()).toString();
-    }
-
+    @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getId()).toHashCode();
-    }
-
-    public boolean equals(Object obj) {
-        if (obj instanceof TaskScheduleJob == false)
-            return false;
-        if (this == obj)
-            return true;
-        TaskScheduleJob other = (TaskScheduleJob) obj;
-        return new EqualsBuilder().append(getId(), other.getId()).isEquals();
-    }
-
-
-    public String getMethodParams() {
-        return methodParams;
-    }
-
-    public void setMethodParams(String methodParams) {
-        this.methodParams = StringEscapeUtils.escapeHtml4(methodParams);
+        return super.hashCode();
     }
 }

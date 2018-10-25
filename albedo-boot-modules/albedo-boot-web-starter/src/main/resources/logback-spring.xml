@@ -17,6 +17,9 @@
     <logger name="org.apache" level="WARN"/>
     <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
     <logger name="org.bson" level="WARN"/>
+    <logger name="org.hibernate.validator" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.ejb.HibernatePersistence" level="OFF"/>
     <logger name="com.baomidou" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.springframework.web" level="INFO"/>
@@ -144,7 +147,7 @@
     <!--开发环境:打印控制台-->
     <springProfile name="dev">
         <logger name="com.albedo.java" level="DEBUG"/>
-        <root level="INFO">
+        <root level="DEBUG">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILEERROR"/>
             <appender-ref ref="FILEWARN"/>
@@ -153,7 +156,7 @@
     </springProfile>
 
     <!--生产环境:打印控制台和输出到文件-->
-    <springProfile name="sit,uat,prod">
+    <springProfile name="prod">
         <logger name="com.albedo.java" level="INFO"/>
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>

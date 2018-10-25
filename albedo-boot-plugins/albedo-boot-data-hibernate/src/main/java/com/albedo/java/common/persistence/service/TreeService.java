@@ -117,7 +117,7 @@ public class TreeService<Repository extends TreeRepository<T, PK>, T extends Tre
     }
 
     @Override
-    public T save(T entity) {
+    public boolean save(T entity) {
         Assert.assertNotNull(entity, "entity 信息为空，操作失败");
         // 获取修改前的parentIds，用于更新子节点的parentIds
         String oldParentIds = entity.getParentIds();
@@ -147,8 +147,8 @@ public class TreeService<Repository extends TreeRepository<T, PK>, T extends Tre
             }
             repository.saveAll(list);
         }
-        log.debug("Save Information for T: {}", entity);
-        return entity;
+        log.debug("Save Information for NoDefaultJCacheRegionFactory: {}", entity);
+        return entity!=null && PublicUtil.isNotEmpty(entity.getId());
     }
 
     @Transactional(readOnly = true, rollbackFor = Exception.class)
@@ -160,5 +160,15 @@ public class TreeService<Repository extends TreeRepository<T, PK>, T extends Tre
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public Long countTopByParentId(String parentId) {
         return repository.countByParentIdAndStatusNot(parentId, TreeEntity.FLAG_DELETE);
+    }
+
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public List<T> findAllByStatusOrderBySortAsc(Integer status){
+        return repository.findAllByStatusOrderBySortAsc(status);
+
+    }
+
+    public List<T> findAllByStatusNotOrderBySort(Integer status) {
+        return repository.findAllByStatusNotOrderBySort(status);
     }
 }

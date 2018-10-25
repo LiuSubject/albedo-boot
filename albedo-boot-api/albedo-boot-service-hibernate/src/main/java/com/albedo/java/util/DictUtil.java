@@ -1,16 +1,17 @@
 package com.albedo.java.util;
 
-import com.albedo.java.common.config.AlbedoProperties;
+import com.albedo.java.common.config.ApplicationProperties;
 import com.albedo.java.modules.sys.domain.Dict;
-import com.albedo.java.modules.sys.repository.DictRepository;
-import com.albedo.java.util.config.SystemConfig;
+import com.albedo.java.modules.sys.service.DictService;
 import com.albedo.java.util.domain.DictVm;
 import com.albedo.java.util.spring.SpringContextHolder;
+import com.albedo.java.vo.base.SelectResult;
 import com.albedo.java.vo.sys.query.DictQuery;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.CacheManager;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,11 +24,14 @@ import java.util.Map;
 public class DictUtil {
     public static final String CACHE_DICT_MAP = "dictMap";
     public static final String CACHE_DICT_LIST = "dictList";
-    public static AlbedoProperties albedoProperties = SpringContextHolder.getBean(AlbedoProperties.class);
-    public static DictRepository dictService = SpringContextHolder.getBean(DictRepository.class);
+    public static ApplicationProperties applicationProperties = SpringContextHolder.getBean(ApplicationProperties.class);
+    public static DictService dictService = SpringContextHolder.getBean(DictService.class);
+    public static CacheManager cacheManager = SpringContextHolder.getBean(CacheManager.class);
     private static Map<String, String> dataMap = Maps.newHashMap();
 
-    private static boolean cluster = albedoProperties.getCluster();
+    private static boolean cluster = applicationProperties.getCluster();
+
+//    private static JmsMessagingTemplate jms = SpringContextHolder.getBean(JmsMessagingTemplate.class);
 
     /**
      * 清空ehcache中所有字典对象
@@ -39,6 +43,18 @@ public class DictUtil {
         }
         RedisUtil.removeUser(CACHE_DICT_LIST);
         RedisUtil.removeUser(CACHE_DICT_MAP);
+//        cacheManager.getCache(DictRepository.CACHE_BY_FIND_CITYS).clear();
+//        cacheManager.getCache(DictRepository.CACHE_BY_FIND_PRODUCTS).clear();
+//        cacheManager.getCache(DictRepository.CACHE_BY_FIND_ORGS).clear();
+        // 通知app来取数据字典
+//        JmsMessageInfo result = new JmsMessageInfo();
+//        Map<String, List<SelectResult>> codes = dictService.findCodes(null);
+//        List<Dict> codes = getDictList();
+//        result.setData(codes);
+//        result.setMessageType("SYNC_AUDIT_DICT");
+//        result.setUuidCode(PublicUtil.getUUID());
+//        result.setSendTime(System.currentTimeMillis());
+//        jms.convertAndSend(BizConstants.APP_LISTENING_DESTINATION, JSON.toJSONString(result));
     }
 
     /**
@@ -56,7 +72,7 @@ public class DictUtil {
         }
 
         if (PublicUtil.isEmpty(dictListJson)) {
-            dictList = dictService.findAllByStatusNotAndIsShowOrderBySortAsc(Dict.FLAG_DELETE, SystemConfig.YES);
+            dictList = dictService.findAllByStatusOrderBySortAsc(Dict.FLAG_NORMAL);
             dictListJson = Json.toJSONString(dictList, Dict.F_PARENT, Dict.F_CREATOR, Dict.F_MODIFIER);
             RedisUtil.putUser(CACHE_DICT_LIST, dictListJson);
         }
@@ -136,11 +152,12 @@ public class DictUtil {
     /**
      * 根据code 和 原始值 获取数据字典name
      *
-     * @param types
+     * @param code
+     * @param values
      * @return
      */
     public static String getNamesByValues(String code, String values) {
-        String[] split = values.split(",");
+        String[] split = values.split(StringUtil.SPLIT_DEFAULT);
         List<String> names = Lists.newArrayList();
         List<Dict> dictList = getDictListBycode(code);
         for (Dict dict : dictList) {
@@ -150,14 +167,14 @@ public class DictUtil {
                 }
             }
         }
-        return StringUtils.join(names, ",");
+        return StringUtils.join(names, StringUtil.SPLIT_DEFAULT);
     }
 
     /**
      * 根据code 和 name 获取数据字典原始值 下级
      *
      * @param code
-     * @param val
+     * @param name
      * @return
      */
     public static String getValByName(String code, String name) {
@@ -208,7 +225,7 @@ public class DictUtil {
      * 根据code 和 编码 获取数据字典name
      *
      * @param code
-     * @param val
+     * @param codeVal
      * @return
      */
     public static String getCode(String code, String codeVal) {
@@ -239,7 +256,7 @@ public class DictUtil {
      * 根据code 和 编码 获取数据字典对象
      *
      * @param code
-     * @param val
+     * @param codeVal
      * @return
      */
     public static Dict getCodeItem(String code, String codeVal) {
@@ -315,7 +332,6 @@ public class DictUtil {
      * 根据code 和 编码 获取数据字典对象
      *
      * @param code
-     * @param val
      * @return
      */
     public static Dict getCodeItem(String code) {
@@ -334,19 +350,20 @@ public class DictUtil {
      * 根据code 和 编码 获取数据字典对象 本级
      *
      * @param code
-     * @param val
      * @return
      */
     public static String getCodeItemVal(String code) {
         Dict dict = getCodeItem(code);
         return dict == null ? null : dict.getVal();
     }
+
     public static List<Dict> getDictList(DictQuery dictQuery) {
         if (PublicUtil.isNotEmpty(dictQuery.getFilter())) {
             return getDictListFilterVal(dictQuery.getCode(), dictQuery.getFilter());
         }
         return getDictList(dictQuery.getCode());
     }
+
     public static List<Dict> getDictList(String code) {
         List<Dict> itemList = Lists.newArrayList();
         for (Dict item : getDictListBycode(code)) {
@@ -359,22 +376,24 @@ public class DictUtil {
 
     public static List<Dict> getDictListFilterVal(String code, String filters) {
         List<Dict> itemList = Lists.newArrayList();
-        List<String> filterList = PublicUtil.isEmpty(filters) ? null : Lists.newArrayList(filters.split(","));
+        List<String> filterList = PublicUtil.isEmpty(filters) ? null : Lists.newArrayList(filters.split(StringUtil.SPLIT_DEFAULT));
         for (Dict item : getDictListBycode(code)) {
             if (Dict.FLAG_NORMAL.equals(item.getStatus())
-                    && (PublicUtil.isEmpty(filterList) || !filterList.contains(item.getVal())))
+                && (PublicUtil.isEmpty(filterList) || !filterList.contains(item.getVal()))) {
                 itemList.add(item);
+            }
         }
         return itemList;
     }
 
     public static List<Dict> getDictListContainVal(String code, String contains) {
         List<Dict> itemList = Lists.newArrayList();
-        List<String> filterList = PublicUtil.isEmpty(contains) ? null : Lists.newArrayList(contains.split(","));
+        List<String> filterList = PublicUtil.isEmpty(contains) ? null : Lists.newArrayList(contains.split(StringUtil.SPLIT_DEFAULT));
         for (Dict item : getDictListBycode(code)) {
             if (Dict.FLAG_NORMAL.equals(item.getStatus()) && PublicUtil.isNotEmpty(filterList)
-                    && filterList.contains(item.getVal()))
+                && filterList.contains(item.getVal())) {
                 itemList.add(item);
+            }
         }
         return itemList;
     }
@@ -412,4 +431,12 @@ public class DictUtil {
         return rsList;
     }
 
+    public static Map<String,List<SelectResult>> getCodes(String codes) {
+        return dictService.findCodes(codes);
+    }
+
+
+    public static Map<String,List<SelectResult>> getCodeList(List<String> kindIds) {
+        return dictService.findCodeList(kindIds);
+    }
 }

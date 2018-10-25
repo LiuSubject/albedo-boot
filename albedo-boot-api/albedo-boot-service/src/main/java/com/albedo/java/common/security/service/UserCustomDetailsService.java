@@ -47,9 +47,7 @@ public class UserCustomDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(final String loginId) {
         log.debug("Authenticating {}", loginId);
-        User userDataBase = userRepository.selectUserByLoginId(loginId);
-        Assert.assertNotNull(userDataBase, "用户 " + loginId + " 不存在");
-        return Optional.of(userDataBase).map(user -> {
+        return userRepository.findOneByLoginId(loginId).map(user -> {
             if (!BaseEntity.FLAG_NORMAL.equals(user.getStatus())) {
                 throw new RuntimeMsgException("用户 " + loginId + " 登录信息已被"+ UserStatusEnum.get(user.getStatus()).getText());
             }

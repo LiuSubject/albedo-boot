@@ -68,4 +68,7 @@ public class PersistenceAuditEventService extends BaseService<PersistenceAuditEv
     }
 
 
+    public PersistentAuditEvent findByPrincipalLast(String principal) {
+        return repository.findTopByPrincipalOrderByAuditEventDateDesc(principal);
+    }
 }

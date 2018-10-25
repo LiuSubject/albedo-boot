@@ -132,7 +132,7 @@ public class JpaCustomeRepositoryImpl<T extends GeneralEntity> implements JpaCus
     /*
      * (non-Javadoc)
      *
-     * @see com.albedo.java.repository.data.support.Itest#checkByProperty(T)
+     * @see com.albedo.java.repository.data.support.Itest#checkByProperty(NoDefaultJCacheRegionFactory)
      */
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
@@ -165,7 +165,7 @@ public class JpaCustomeRepositoryImpl<T extends GeneralEntity> implements JpaCus
     /*
      * (non-Javadoc)
      *
-     * @see com.albedo.java.repository.data.support.Itest#checkByPK(T)
+     * @see com.albedo.java.repository.data.support.Itest#checkByPK(NoDefaultJCacheRegionFactory)
      */
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)

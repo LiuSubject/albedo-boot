@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.albedo.java</groupId>
-            <artifactId>albedo-boot-service-mybatis</artifactId>
+            <artifactId>albedo-boot-service-hibernate</artifactId>
             <version>${project.release.version}</version>
         </dependency>
 
@@ -48,11 +48,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-localconfig-connector</artifactId>
-        </dependency>
-        <!-- EHCACHE begin -->
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
         </dependency>
         <!-- poi office -->
         <dependency>
