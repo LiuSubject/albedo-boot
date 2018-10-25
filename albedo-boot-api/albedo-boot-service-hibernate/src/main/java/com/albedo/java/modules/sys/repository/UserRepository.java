@@ -22,8 +22,8 @@ public interface UserRepository extends DataRepository<User, String> {
 
     Optional<User> findOneByResetKey(String resetKey);
 
-    @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE)
-    Optional<User> findOneByLoginId(String loginId);
+//    @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE)
+    User findOneByLoginId(String loginId);
 
     Optional<User> getOneByLoginId(String loginId);
 

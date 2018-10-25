@@ -4,13 +4,10 @@ import com.albedo.java.common.persistence.service.TreeVoService;
 import com.albedo.java.util.PublicUtil;
 import com.albedo.java.util.domain.Globals;
 import com.albedo.java.vo.base.TreeEntityVo;
-import com.albedo.java.web.rest.ResultBuilder;
 import com.codahale.metrics.annotation.Timed;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * 基础控制器支持类 copyright 2014 albedo all right reserved author MrLi created on 2014年10月15日 下午4:04:00
@@ -39,10 +36,11 @@ public class TreeVoResource<Service extends TreeVoService, V extends TreeEntityV
      * @return
      */
     @GetMapping("/{id:" + Globals.LOGIN_REGEX + "}")
+    @ResponseBody
     @Timed
-    public ResponseEntity get(@PathVariable String id) {
+    public V info(@PathVariable String id) {
         log.debug("REST request to get Entity : {}", id);
-        return ResultBuilder.wrapOrNotFound(Optional.ofNullable(service.findOneVo(id)));
+        return (V) service.findOneVo(id);
     }
 
     @ResponseBody

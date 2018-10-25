@@ -92,11 +92,9 @@ public class AccoutResource extends BaseResource {
         String id = SecurityUtil.getCurrentUserId();
         try{
             if(PublicUtil.isNotEmpty(id)){
-                Optional<UserDataVo> userVo = userService.findById(id)
-                    .map(item -> userService.copyBeanToDataVo(item));
-                UserDataVo user = userVo.get();
-                user.setAuthorities(SecurityUtil.getCurrentUserAuthorities());
-                return ResultBuilder.buildOk(user);
+                UserDataVo userDataVo = userService.findUserDataById(id);
+                userDataVo.setAuthorities(SecurityUtil.getCurrentUserAuthorities());
+                return ResultBuilder.buildOk(userDataVo);
             }
         }catch (Exception e){
             log.warn("{}",e);
@@ -128,10 +126,10 @@ public class AccoutResource extends BaseResource {
     @ApiOperation("认证授权")
     public ResponseEntity authorize(@Valid @RequestBody LoginVo loginVo) {
 
-        Date canLoginDate = RedisUtil.getCacheObject(AuthoritiesConstants.DEFAULT_LOGIN_AFTER_24_KEY + loginVo.getUsername());
-        if(canLoginDate!=null){
-            return ResultBuilder.buildFailed(HttpStatus.UNAUTHORIZED, "您的账号在"+PublicUtil.fmtDate(canLoginDate)+"后才可登录");
-        }
+//        Date canLoginDate = RedisUtil.getCacheObject(AuthoritiesConstants.DEFAULT_LOGIN_AFTER_24_KEY + loginVo.getUsername());
+//        if(canLoginDate!=null){
+//            return ResultBuilder.buildFailed(HttpStatus.UNAUTHORIZED, "您的账号在"+PublicUtil.fmtDate(canLoginDate)+"后才可登录");
+//        }
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVo.getUsername(), loginVo.getPassword());
 
@@ -143,42 +141,46 @@ public class AccoutResource extends BaseResource {
             String jwt = tokenProvider.createToken(authentication, rememberMe);
             String keyPrefix = AuthoritiesConstants.DEFAULT_LOGIN_JWT_KEY+loginVo.getUsername()
                 , key = keyPrefix + IdGen.uuid();
-            Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
-            if (!activeProfiles.contains(Globals.SPRING_PROFILE_DEVELOPMENT)) {
-                Long count = RedisUtil.deleteStringLike(keyPrefix+"*");
-                if(count>0){
-//                    WebSocketServer.sendMessageAndClose(SecurityUtil.getCurrentUserId(),
-//                        "您的账号已在其他入口登录，请核查", "logout");
-                }
-            }
+//            Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
+//            if (!activeProfiles.contains(Globals.SPRING_PROFILE_DEVELOPMENT)) {
+//                Long count = RedisUtil.deleteStringLike(keyPrefix+"*");
+//                if(count>0){
+////                    WebSocketServer.sendMessageAndClose(SecurityUtil.getCurrentUserId(),
+////                        "您的账号已在其他入口登录，请核查", "logout");
+//                }
+//            }
             log.info("key{}",key);
+
             log.info("jwt{}",jwt);
             RedisUtil.setCacheString(key, jwt,
                 tokenProvider.getTokenValidityInSeconds(), TimeUnit.SECONDS);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(SecurityConstants.AUTHORIZATION_HEADER, key);
             RedisUtil.setCacheObject(keyLoginCount, 1);
-            return new ResponseEntity<>(CustomMessage.createSuccessData(key), httpHeaders, HttpStatus.OK);
+            UserDataVo userDataVo = userService.findUserDataByLoginId(authentication.getName());
+            userDataVo.setAuthorities(SecurityUtil.getCurrentUserAuthorities());
+            userDataVo.setToken(key);
+            return new ResponseEntity<>(CustomMessage.createSuccessData(userDataVo), httpHeaders, HttpStatus.OK);
 
         } catch (AuthenticationException ae) {
             log.warn("Authentication exception trace: {}", ae);
             String msg = ae.getMessage();
             if(ae instanceof BadCredentialsException){
-                Integer cacheObject = RedisUtil.getCacheObject(keyLoginCount);
-                if(cacheObject == null){
-                    cacheObject = 1;
-                }
+//                Integer cacheObject = RedisUtil.getCacheObject(keyLoginCount);
+//                if(cacheObject == null){
+//                    cacheObject = 1;
+//                }
                 msg = "密码错误，请重试";
-                if(cacheObject >= 5 && cacheObject<9){
-                    msg = "您还剩"+(10-cacheObject)+"次密码输入机会，建议点击‘忘记密码’";
-                }else if(cacheObject == 9){
-                    msg = "您还剩1次密码输入机会，再次错误，您的账号将被暂时锁定24小时，24小时内禁止登录";
-                }else if(cacheObject > 9){
-                    msg = "您密码错误次数已超过10次，您的账号将被暂时锁定24小时，建议点击‘忘记密码’，凭手机号码重置密码，24小时后再尝试登录";
-                    cacheObject=0;
-                    RedisUtil.setCacheObject(AuthoritiesConstants.DEFAULT_LOGIN_AFTER_24_KEY +loginVo.getUsername(), DateUtil.addDays(PublicUtil.getCurrentDate(), 1), 1, TimeUnit.DAYS);
-                }
-                RedisUtil.setCacheObject(keyLoginCount, 1+cacheObject);
+//                if(cacheObject >= 5 && cacheObject<9){
+//                    msg = "您还剩"+(10-cacheObject)+"次密码输入机会，建议点击‘忘记密码’";
+//                }else if(cacheObject == 9){
+//                    msg = "您还剩1次密码输入机会，再次错误，您的账号将被暂时锁定24小时，24小时内禁止登录";
+//                }else if(cacheObject > 9){
+//                    msg = "您密码错误次数已超过10次，您的账号将被暂时锁定24小时，建议点击‘忘记密码’，凭手机号码重置密码，24小时后再尝试登录";
+//                    cacheObject=0;
+//                    RedisUtil.setCacheObject(AuthoritiesConstants.DEFAULT_LOGIN_AFTER_24_KEY +loginVo.getUsername(), DateUtil.addDays(PublicUtil.getCurrentDate(), 1), 1, TimeUnit.DAYS);
+//                }
+//                RedisUtil.setCacheObject(keyLoginCount, 1+cacheObject);
             }
             return ResultBuilder.buildFailed(HttpStatus.UNAUTHORIZED, msg);
         }

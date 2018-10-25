@@ -1,7 +1,7 @@
 <!--begin::Signin-->
 <!--<div class="m-login__signin">-->
 <div class="m-login__title">
-	<h3 translate="AUTH.LOGIN.TITLE">Login Account</h3>
+	<h3>登录</h3>
 </div>
 
 <m-auth-notice></m-auth-notice>
@@ -10,15 +10,15 @@
 <form class="m-login__form m-form" name="form" (ngSubmit)="f.form.valid && submit()" #f="ngForm" novalidate>
 	<div class="form-group">
 		<mat-form-field>
-			<mat-label>Email</mat-label>
-			<input matInput type="email" name="email" placeholder="Email address" autocomplete="off"
-				   [(ngModel)]="model.email" #email="ngModel" email="true" required>
+			<mat-label>用户名</mat-label>
+			<input matInput type="email" name="username" placeholder="用户名" autocomplete="off"
+				   [(ngModel)]="model.username" #username="ngModel" email="true" required>
 		</mat-form-field>
 	</div>
 	<div class="form-group">
 		<mat-form-field>
-			<mat-label>Password</mat-label>
-			<input matInput minlength="4" type="password" name="password" placeholder="Password" autocomplete="off"
+			<mat-label>密码</mat-label>
+			<input matInput minlength="4" type="password" name="密码" placeholder="Password" autocomplete="off"
 				   [(ngModel)]="model.password" #password="ngModel" required>
 		</mat-form-field>
 	</div>
@@ -26,7 +26,7 @@
 <!--end::Form-->
 
 <!--begin::Action-->
-<div class="m-login__action m-login__action--fit">
+<div class="m-login__action m-login__action--fit hide">
 	<a href="javascript:;" (click)="forgotPasswordPage($event)" class="m-link">
 		<span translate="AUTH.GENERAL.FORGOT_BUTTON">Forgot Password?</span>
 	</a>
@@ -35,7 +35,7 @@
 <!--end::Action-->
 
 <!--begin::Divider-->
-<div class="m-login__form-divider">
+<div class="m-login__form-divider hide">
 	<div class="m-divider">
 		<span></span>
 		<span translate="AUTH.GENERAL.OR">OR</span>
@@ -45,7 +45,7 @@
 <!--end::Divider-->
 
 <!--begin::Options-->
-<div class="m-login__options">
+<div class="m-login__options hide">
 	<a href="javascript:;" mat-raised-button color="primary">
 			<span>
 				<i class="fab fa-facebook-f"></i>&nbsp;

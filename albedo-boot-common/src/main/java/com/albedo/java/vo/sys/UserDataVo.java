@@ -38,22 +38,17 @@ public class UserDataVo extends DataEntityVo<String> {
     private String name;
     private String phone;
     private String email;
-    private String roleIdList;
+    private List<String> roleIdList;
     private String roleNames;
     private String orgName;
-    private String idCard;
-    private String city;
-    /** 用户ID */
-    private String numberCode;
     @ApiModelProperty("登录时间")
     private Date loginTime;
     @ApiModelProperty("系统当前时间")
     private Date currentTime;
     @ApiModelProperty("权限")
     private List<String> authorities;
+    @ApiModelProperty("请求token")
+    private String token;
 
-//    public String getRoleIds() {
-//        return Collections3.convertToString(getRoleIdList(), StringUtil.SPLIT_DEFAULT);
-//    }
 
 }

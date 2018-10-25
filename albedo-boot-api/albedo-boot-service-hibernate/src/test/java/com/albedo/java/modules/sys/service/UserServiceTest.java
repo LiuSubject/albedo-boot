@@ -159,9 +159,7 @@ public class UserServiceTest {
         User userAdmin = new User();
         userAdmin.setId("1");
         userAdmin.setLoginId("admin");
-        userRepository.findOneByLoginId(userAdmin.getLoginId()).ifPresent(t -> {
-            userAdmin.setId(t.getId());
-        });
+        userAdmin.setId(userRepository.findOneByLoginId(userAdmin.getLoginId()).getId());
         userRepository.save(userAdmin);
         getSession().flush();
         orgRepository.findOneByName(orgParent.getName()).ifPresent(t -> {
@@ -177,32 +175,24 @@ public class UserServiceTest {
 
         user1.setOrgId(org.getId());
         user1.setRoles(roles);
-        userRepository.findOneByLoginId(user1.getLoginId()).ifPresent(t -> {
-            user1.setId(t.getId());
-        });
+        user1.setId(userRepository.findOneByLoginId(user1.getLoginId()).getId());
         userService.save(user1);
 
         user2.setOrgId(org.getId());
         user2.setRoles(roles);
-        userRepository.findOneByLoginId(user2.getLoginId()).ifPresent(t -> {
-            user2.setId(t.getId());
-        });
+        user2.setId(userRepository.findOneByLoginId(user2.getLoginId()).getId());
         userService.save(user2);
 
 
         user3.setOrgId(org.getId());
         user3.setRoles(roles);
-        userRepository.findOneByLoginId(user3.getLoginId()).ifPresent(t -> {
-            user3.setId(t.getId());
-        });
+        user3.setId(userRepository.findOneByLoginId(user3.getLoginId()).getId());
         userService.save(user3);
 
 
         user4.setOrgId(org.getId());
         user4.setRoles(roles);
-        userRepository.findOneByLoginId(user4.getLoginId()).ifPresent(t -> {
-            user4.setId(t.getId());
-        });
+        user4.setId(userRepository.findOneByLoginId(user4.getLoginId()).getId());
         userService.save(user4);
 
         id = user1.getId();
@@ -232,7 +222,7 @@ public class UserServiceTest {
         assertThat(pm.getData().size(), is(4));
         assertThat(pm.getData().get(0).getLoginId(), is(user1.getLoginId()));
 
-        User temp = userRepository.findOneByLoginId(user1.getLoginId()).get();
+        User temp = userRepository.findOneByLoginId(user1.getLoginId());
 
         List<Module> modules = moduleService.findAllAuthByUser("1");
 //        assertThat(modules.size()!=0, is(true));

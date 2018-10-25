@@ -3,7 +3,6 @@ package com.albedo.java.spring.boot.autoconfigure.lock.redis;
 import com.albedo.java.spring.boot.autoconfigure.lock.redis.lock.DistributedLock;
 import com.albedo.java.spring.boot.autoconfigure.lock.redis.lock.impl.RedisDistributedLock;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
