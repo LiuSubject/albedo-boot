@@ -57,7 +57,7 @@ public class AccoutResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        doNothing().when(mockMailService).sendActivationEmail(anyObject());
+//        doNothing().when(mockMailService).sendActivationEmail(anyObject());
 
 //        AccoutResource accountResource =
 //            new AccoutResource(tokenProvider, authenticationManager);

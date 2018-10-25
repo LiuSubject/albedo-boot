@@ -147,7 +147,7 @@
     <!--开发环境:打印控制台-->
     <springProfile name="dev">
         <logger name="com.albedo.java" level="DEBUG"/>
-        <root level="DEBUG">
+        <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILEERROR"/>
             <appender-ref ref="FILEWARN"/>

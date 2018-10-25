@@ -32,7 +32,7 @@ import java.util.Map;
  * @author somewhere
  */
 @Controller
-@RequestMapping(value = "${albedo.adminPath}/gen/genScheme")
+@RequestMapping(value = "${application.adminPath}/gen/genScheme")
 public class GenSchemeResource extends DataVoResource<GenSchemeService, GenSchemeVo> {
 
     private final GenTableService genTableService;
@@ -98,7 +98,6 @@ public class GenSchemeResource extends DataVoResource<GenSchemeService, GenSchem
     @DeleteMapping(value = "/{ids:" + Globals.LOGIN_REGEX
             + "}")
     @Timed
-    @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity delete(@PathVariable String ids) {
         log.debug("REST request to delete User: {}", ids);
         service.deleteBatchIds(Lists.newArrayList(ids.split(StringUtil.SPLIT_DEFAULT)));
