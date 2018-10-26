@@ -20,25 +20,23 @@ export class AclService implements ConfigData {
 		this.aclModel = new AclModel();
 		this.onAclUpdated$ = new BehaviorSubject(this.aclModel);
 
-		this.authService.getUserRoles().subscribe(roles => {
-			this.setCurrrentUserRoles(roles);
+		this.authService.getUserAuthorities().subscribe(authorities => {
+			this.setCurrrentUserAuthorities(authorities);
 		});
 
 		// subscribe to credential changed, eg. after login response
 		this.authService.onCredentialUpdated$
 			.pipe(mergeMap(accessData => this.authService.getUserRoles()))
-			.subscribe(roles => this.setCurrrentUserRoles(roles));
+			.subscribe(roles => this.setCurrrentUserAuthorities(roles));
 
 		// subscribe to acl data observable
 		this.onAclUpdated$.subscribe(acl => {
-			const permissions = Object.keys(acl.permissions).map((key) => {
-				return acl.permissions[key];
-			});
+			const permissions = acl.currentUserAuthorities;
 			// load default permission list
 			this.permService.loadPermissions(permissions, (permissionName, permissionStore) => !!permissionStore[permissionName]);
 
 			// merge current user roles
-			const roles = Object.assign({}, this.aclModel.currentUserRoles, {
+			const roles = Object.assign({}, this.aclModel.currentUserAuthorities, {
 				// default user role is GUEST
 				GUEST: () => {
 					// return this.authService.isAuthorized().toPromise();
@@ -58,13 +56,10 @@ export class AclService implements ConfigData {
 		this.onAclUpdated$.next(aclModel);
 	}
 
-	setCurrrentUserRoles(roles: any): any {
+	setCurrrentUserAuthorities(authorities: any): any {
 		// update roles if the credential data has roles
-		if (roles != null) {
-			this.aclModel.currentUserRoles = {};
-			roles.forEach(role => {
-				this.aclModel.currentUserRoles[role] = this.aclModel.permissions[role];
-			});
+		if (authorities != null) {
+			this.aclModel.currentUserAuthorities = authorities;
 			// set updated acl model back to service
 			this.setModel(this.aclModel);
 		}

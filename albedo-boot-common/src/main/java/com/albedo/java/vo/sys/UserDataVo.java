@@ -38,6 +38,7 @@ public class UserDataVo extends DataEntityVo<String> {
     private String name;
     private String phone;
     private String email;
+    @ApiModelProperty("角色")
     private List<String> roleIdList;
     private String roleNames;
     private String orgName;
@@ -48,7 +49,7 @@ public class UserDataVo extends DataEntityVo<String> {
     @ApiModelProperty("权限")
     private List<String> authorities;
     @ApiModelProperty("请求token")
-    private String token;
+    private String accessToken;
 
 
 }

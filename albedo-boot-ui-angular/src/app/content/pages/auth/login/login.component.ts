@@ -56,6 +56,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 		this.spinner.active = true;
 		if (this.validate(this.f)) {
 			this.authService.login(this.model).subscribe(response => {
+				console.log(response)
 				if (typeof response !== 'undefined') {
 					this.router.navigate(['/']);
 				} else {

@@ -159,7 +159,7 @@ public class AccoutResource extends BaseResource {
             RedisUtil.setCacheObject(keyLoginCount, 1);
             UserDataVo userDataVo = userService.findUserDataByLoginId(authentication.getName());
             userDataVo.setAuthorities(SecurityUtil.getCurrentUserAuthorities());
-            userDataVo.setToken(key);
+            userDataVo.setAccessToken(key);
             return new ResponseEntity<>(CustomMessage.createSuccessData(userDataVo), httpHeaders, HttpStatus.OK);
 
         } catch (AuthenticationException ae) {

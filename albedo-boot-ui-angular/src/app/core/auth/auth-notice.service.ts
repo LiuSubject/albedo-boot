@@ -19,4 +19,12 @@ export class AuthNoticeService {
 		};
 		this.onNoticeChanged$.next(notice);
 	}
+
+	setSuccessNotice(message: string){
+		this.setNotice(message, 'success')
+	}
+
+	setErrorNotice(message: string){
+		this.setNotice(message, 'error')
+	}
 }

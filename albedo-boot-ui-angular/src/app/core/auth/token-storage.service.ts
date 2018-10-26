@@ -31,7 +31,16 @@ export class TokenStorage {
 			return of(JSON.parse(roles));
 		} catch (e) {}
 	}
-
+	/**
+	 * Get user roles in JSON string
+	 * @returns {Observable<any>}
+	 */
+	public getUserAuthorities(): Observable<any> {
+		const authorities: any = localStorage.getItem('userAuthorities');
+		try {
+			return of(JSON.parse(authorities));
+		} catch (e) {}
+	}
 	/**
 	 * Set access token
 	 * @returns {TokenStorage}
@@ -61,10 +70,19 @@ export class TokenStorage {
 		if (roles != null) {
 			localStorage.setItem('userRoles', JSON.stringify(roles));
 		}
-
 		return this;
 	}
-
+	/**
+	 * Set user authorities
+	 * @param roles
+	 * @returns {TokenStorage}
+	 */
+	public setUserAuthorities(authorities: any): any {
+		if (authorities != null) {
+			localStorage.setItem('userAuthorities', JSON.stringify(authorities));
+		}
+		return this;
+	}
 	/**
 	 * Remove tokens
 	 */
