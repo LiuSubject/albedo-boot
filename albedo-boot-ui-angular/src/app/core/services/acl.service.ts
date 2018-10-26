@@ -26,7 +26,7 @@ export class AclService implements ConfigData {
 
 		// subscribe to credential changed, eg. after login response
 		this.authService.onCredentialUpdated$
-			.pipe(mergeMap(accessData => this.authService.getUserRoles()))
+			.pipe(mergeMap(accessData => this.authService.getUserAuthorities()))
 			.subscribe(roles => this.setCurrrentUserAuthorities(roles));
 
 		// subscribe to acl data observable

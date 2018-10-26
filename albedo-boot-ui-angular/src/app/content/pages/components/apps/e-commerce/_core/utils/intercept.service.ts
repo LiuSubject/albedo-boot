@@ -16,6 +16,7 @@ export class InterceptService implements HttpInterceptor {
 		request: HttpRequest<any>,
 		next: HttpHandler
 	): Observable<HttpEvent<any>> {
+		console.log("11111111111111111");
 		// modify request
 		request = request.clone({
 			setHeaders: {

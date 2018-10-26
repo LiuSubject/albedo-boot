@@ -9,6 +9,7 @@ import { TokenStorage } from './token-storage.service';
 import { UtilsService } from '../services/utils.service';
 import { AccessData } from './access-data';
 import { Credential } from './credential';
+import {AuthNoticeService} from "./auth-notice.service";
 
 @Injectable()
 export class AuthenticationService implements AuthService {
@@ -22,6 +23,7 @@ export class AuthenticationService implements AuthService {
 	constructor(
 		private http: HttpClient,
 		private tokenStorage: TokenStorage,
+		private authNoticeService: AuthNoticeService,
 		private util: UtilsService
 	) {
 		this.onCredentialUpdated$ = new Subject();
@@ -87,7 +89,8 @@ export class AuthenticationService implements AuthService {
 	 * @returns {boolean}
 	 */
 	public refreshShouldHappen(response: HttpErrorResponse): boolean {
-		return response.status === 401;
+		// return response.status === 500;
+		return false;
 	}
 
 	/**
@@ -109,15 +112,13 @@ export class AuthenticationService implements AuthService {
 		// Expecting response from API
 		// tslint:disable-next-line:max-line-length
 		// {"id":1,"username":"admin","password":"demo","email":"admin@demo.com","accessToken":"access-token-0.022563452858263444","refreshToken":"access-token-0.9348573301432961","roles":["ADMIN"],"pic":"./assets/app/media/img/users/user4.jpg","fullname":"Mark Andre"}
+		console.log(credential)
 		return this.http.post<AccessData>(this.API_URL + this.API_ENDPOINT_LOGIN, credential).pipe(
 			map((result: any) => {
-				if (result instanceof Array) {
-					return result.pop();
-				}
-				return result;
+				return result.data;
 			}),
 			tap(this.saveAccessData.bind(this)),
-			catchError(this.handleError('login', []))
+			// catchError(this.handleError('login', []))
 		);
 	}
 
@@ -128,10 +129,8 @@ export class AuthenticationService implements AuthService {
 	 * @param result - optional value to return as the observable result
 	 */
 	private handleError<T>(operation = 'operation', result?: any) {
-		return (error: any): Observable<any> => {
-			// TODO: send the error to remote logging infrastructure
-			console.error(error); // log to console instead
-
+		return (rs: any): Observable<any> => {
+			console.warn(rs); // log to console instead
 			// Let the app keep running by returning an empty result.
 			return from(result);
 		};
@@ -153,6 +152,7 @@ export class AuthenticationService implements AuthService {
 	 * @param {AccessData} data
 	 */
 	private saveAccessData(accessData: AccessData) {
+		console.log(accessData)
 		if (typeof accessData !== 'undefined') {
 			this.tokenStorage
 				.setAccessToken(accessData.accessToken)

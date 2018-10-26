@@ -567,6 +567,9 @@ public final class SecurityUtil {
                 dataList.addAll(Lists.newArrayList(item.getPermission().split(StringUtil.SPLIT_DEFAULT)));
             }
         });
+        if(PublicUtil.isNotEmpty(getCurrentUserId())){
+            dataList.add(AuthoritiesConstants.USER);
+        }
         return dataList;
     }
 }

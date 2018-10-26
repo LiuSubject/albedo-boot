@@ -4,6 +4,7 @@ import { MenuConfigService } from '../menu-config.service';
 import { ClassInitService } from '../class-init.service';
 import * as objectPath from 'object-path';
 import { LayoutConfigService } from '../layout-config.service';
+import {DataSystemService} from "../data.system.service";
 
 @Injectable()
 export class MenuAsideService {
@@ -17,10 +18,21 @@ export class MenuAsideService {
 	constructor(
 		private menuConfigService: MenuConfigService,
 		private classInitService: ClassInitService,
+		private dataSystemService: DataSystemService,
 		private layoutConfigService: LayoutConfigService
 	) {
+
 		// get menu list
 		this.menuConfigService.onMenuUpdated$.subscribe(model => {
+
+			dataSystemService.menus()
+			this.dataSystemService.menus().subscribe(
+				(data: Module[]) => {
+					this.menus = data
+					this.initMenuData()
+				}
+			)
+			console.log(objectPath.get(model.config, 'aside.items'))
 			setTimeout(() =>
 				this.menuList$.next(objectPath.get(model.config, 'aside.items'))
 			);

@@ -46,6 +46,7 @@ import { MenuAsideService } from './core/services/layout/menu-aside.service';
 import { LayoutRefService } from './core/services/layout/layout-ref.service';
 import { SplashScreenService } from './core/services/splash-screen.service';
 import { DataTableService } from './core/services/datatable.service';
+import {DataSystemService} from "./core/services/data.system.service";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 	// suppressScrollX: true
@@ -75,6 +76,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 		LayoutConfigStorageService,
 		LayoutRefService,
 		MenuConfigService,
+		DataSystemService,
 		PageConfigService,
 		UserService,
 		UtilsService,

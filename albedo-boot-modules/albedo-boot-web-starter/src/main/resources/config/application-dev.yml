@@ -23,10 +23,10 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://144.202.113.186:3306/albedo-boot?useUnicode=true&characterEncoding=utf8&useSSL=false
+        url: jdbc:mysql://localhost:3306/albedo-boot?useUnicode=true&characterEncoding=utf8&useSSL=false
         name: ${spring.application.name}
-        username: king
-        password: 123456
+        username: root
+        password: 111111
         hikari:
             data-source-properties:
                 cachePrepStmts: true
@@ -40,9 +40,9 @@ spring:
         favicon:
             enabled: false
     redis:
-       host: 144.202.113.186
-       password: albedo-boot
-       port: 6379
+#       host: 144.202.113.186
+#       password: albedo-boot
+#       port: 6379
     web:
         root:
             prefix: albedo-boot-ui-vue/target/dist/

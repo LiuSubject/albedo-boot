@@ -53,18 +53,23 @@ export class LoginComponent implements OnInit, OnDestroy {
 	) {}
 
 	submit() {
-		this.spinner.active = true;
+		// this.spinner.active = true;
 		if (this.validate(this.f)) {
 			this.authService.login(this.model).subscribe(response => {
 				console.log(response)
 				if (typeof response !== 'undefined') {
 					this.router.navigate(['/']);
 				} else {
-					this.authNoticeService.setNotice(this.translate.instant('AUTH.VALIDATION.INVALID_LOGIN'), 'error');
+					this.authNoticeService.setErrorNotice("用户名密码错误");
 				}
 				this.spinner.active = false;
 				this.cdr.detectChanges();
-			});
+			}
+			// , (rs) => {
+			// 	this.authNoticeService.setErrorNotice(rs.error && rs.error.message);
+			// }
+			);
+
 		}
 	}
 
@@ -74,12 +79,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 			// const initialNotice = `Use account
 			// <strong>admin@demo.com</strong> and password
 			// <strong>demo</strong> to continue.`;
-			// this.authNoticeService.setNotice(initialNotice, 'success');
+			// this.authNoticeService.setSuccessNotice("请输入登录名和密码");
 		}
 	}
 
 	ngOnDestroy(): void {
-		this.authNoticeService.setNotice(null);
+		// this.authNoticeService.setNotice(null);
 	}
 
 	validate(f: NgForm) {
