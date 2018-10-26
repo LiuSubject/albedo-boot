@@ -20,7 +20,7 @@ public class UserSecurtyService extends DataVoService<UserRepository, User, Stri
 
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public Optional<User> findOneByLoginId(String login) {
-        return repository.findOneByLoginId(login);
+        return Optional.of(repository.findOneByLoginId(login));
     }
 
 }

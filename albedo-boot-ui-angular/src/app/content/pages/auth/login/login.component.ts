@@ -25,7 +25,7 @@ import { SpinnerButtonOptions } from '../../../partials/content/general/spinner-
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit, OnDestroy {
-	public model: any = { email: 'admin@demo.com', password: 'demo' };
+	public model: any = { username: '', password: '' };
 	@HostBinding('class') classes: string = 'm-login__signin';
 	@Output() actionChange = new Subject<string>();
 	public loading = false;
@@ -70,10 +70,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		// demo message to show
 		if (!this.authNoticeService.onNoticeChanged$.getValue()) {
-			const initialNotice = `Use account
-			<strong>admin@demo.com</strong> and password
-			<strong>demo</strong> to continue.`;
-			this.authNoticeService.setNotice(initialNotice, 'success');
+			// const initialNotice = `Use account
+			// <strong>admin@demo.com</strong> and password
+			// <strong>demo</strong> to continue.`;
+			// this.authNoticeService.setNotice(initialNotice, 'success');
 		}
 	}
 
@@ -87,18 +87,15 @@ export class LoginComponent implements OnInit, OnDestroy {
 		}
 
 		this.errors = [];
-		if (objectPath.get(f, 'form.controls.email.errors.email')) {
-			this.errors.push(this.translate.instant('AUTH.VALIDATION.INVALID', {name: this.translate.instant('AUTH.INPUT.EMAIL')}));
-		}
-		if (objectPath.get(f, 'form.controls.email.errors.required')) {
-			this.errors.push(this.translate.instant('AUTH.VALIDATION.REQUIRED', {name: this.translate.instant('AUTH.INPUT.EMAIL')}));
+		if (objectPath.get(f, 'form.controls.username.errors.required')) {
+			this.errors.push("用户名必填");
 		}
 
 		if (objectPath.get(f, 'form.controls.password.errors.required')) {
-			this.errors.push(this.translate.instant('AUTH.VALIDATION.INVALID', {name: this.translate.instant('AUTH.INPUT.PASSWORD')}));
+			this.errors.push("密码必填");
 		}
 		if (objectPath.get(f, 'form.controls.password.errors.minlength')) {
-			this.errors.push(this.translate.instant('AUTH.VALIDATION.MIN_LENGTH', {name: this.translate.instant('AUTH.INPUT.PASSWORD')}));
+			this.errors.push("密码必须大于4位");
 		}
 
 		if (this.errors.length > 0) {

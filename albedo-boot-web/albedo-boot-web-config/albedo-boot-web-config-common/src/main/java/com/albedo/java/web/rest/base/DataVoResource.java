@@ -39,11 +39,13 @@ public class DataVoResource<Service extends DataVoService, V extends DataEntityV
      * @return
      */
     @GetMapping("/{id:" + Globals.LOGIN_REGEX + "}")
+    @ResponseBody
     @Timed
-    public ResponseEntity get(@PathVariable String id) {
+    public V info(@PathVariable String id) {
         log.debug("REST request to get Entity : {}", id);
-        return ResultBuilder.wrapOrNotFound(Optional.ofNullable(service.findOneVo(id)));
+        return (V) service.findOneVo(id);
     }
+
 
     @ResponseBody
     @GetMapping(value = "checkByProperty")

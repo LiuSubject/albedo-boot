@@ -13,7 +13,7 @@ import { Credential } from './credential';
 @Injectable()
 export class AuthenticationService implements AuthService {
 	API_URL = 'api';
-	API_ENDPOINT_LOGIN = '/login';
+	API_ENDPOINT_LOGIN = '/authenticate';
 	API_ENDPOINT_REFRESH = '/refresh';
 	API_ENDPOINT_REGISTER = '/register';
 

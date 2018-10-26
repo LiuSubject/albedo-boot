@@ -93,7 +93,7 @@ public class UserService extends DataVoService<UserRepository, User, String, Use
                 userResult.setOrgName(user.getOrg().getName());
             }
             if(user.getRoleIdList()!=null){
-                userResult.setRoleIdList(user.getRoleIdList().get(0));
+                userResult.setRoleIdList(user.getRoleIdList());
             }
             PersistentAuditEvent persistentAuditEvent = persistenceAuditEventService.findByPrincipalLast(user.getLoginId());
             if(PublicUtil.isNotEmpty(persistentAuditEvent)){
@@ -199,7 +199,7 @@ public class UserService extends DataVoService<UserRepository, User, String, Use
     public void resetPassword(@Valid PasswordRestVo passwordRestVo) {
         Object tempCode = redisTemplate.opsForValue().get(AuthoritiesConstants.DEFAULT_CODE_KEY + passwordRestVo.getPhone());
         Assert.assertIsTrue(passwordRestVo.getCode().equals(tempCode), "验证码输入有误");
-        repository.findOneByLoginId(passwordRestVo.getLoginId()).ifPresent(
+        Optional.of(repository.findOneByLoginId(passwordRestVo.getLoginId())).ifPresent(
             user -> updatePassword(user, passwordRestVo.getPasswordPlaintext(), passwordRestVo.getNewPassword())
         );
     }
@@ -212,7 +212,7 @@ public class UserService extends DataVoService<UserRepository, User, String, Use
     }
 
     public void changePassword(String loginId, PasswordChangeVo passwordChangeVo) {
-        repository.findOneByLoginId(loginId).ifPresent(
+        Optional.of(repository.findOneByLoginId(loginId)).ifPresent(
             user -> updatePassword(user, passwordChangeVo.getConfirmPassword(), passwordChangeVo.getNewPassword())
         );
     }
@@ -271,5 +271,17 @@ public class UserService extends DataVoService<UserRepository, User, String, Use
     public UserVo findExcelOneVo() {
         User user = repository.findOneByIdNotAndStatus("1", User.FLAG_NORMAL);
         return BeanVoUtil.copyPropertiesByClass(user, UserVo.class);
+    }
+
+    public UserDataVo findUserDataById(String id) {
+        Optional<UserDataVo> userVo = findById(id)
+            .map(item -> copyBeanToDataVo(item));
+        return userVo.get();
+    }
+
+    public UserDataVo findUserDataByLoginId(String loginId) {
+        Optional<UserDataVo> userVo = repository.getOneByLoginId(loginId)
+            .map(item -> copyBeanToDataVo(item));
+        return userVo.get();
     }
 }

@@ -1,3 +1,3 @@
-com\albedo\java\TransformMysqlToH2.class
-com\albedo\java\config\TestConfig.class
-com\albedo\java\modules\sys\service\UserServiceTest.class
+com/albedo/java/config/TestConfig.class
+com/albedo/java/TransformMysqlToH2.class
+com/albedo/java/modules/sys/service/UserServiceTest.class
